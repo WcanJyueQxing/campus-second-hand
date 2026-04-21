@@ -1,0 +1,75 @@
+.home-page {
+  background: linear-gradient(180deg, #eef5ff 0%, #f4f7fc 260rpx);
+}
+
+.search-panel {
+  margin-bottom: 24rpx;
+}
+
+.search-row {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  margin-top: 22rpx;
+}
+
+.search-input {
+  flex: 1;
+}
+
+.search-btn {
+  flex: 0 0 170rpx;
+  padding: 0;
+}
+
+.goods-card {
+  display: flex;
+  gap: 20rpx;
+}
+
+.goods-cover {
+  width: 180rpx;
+  height: 180rpx;
+  border-radius: 14rpx;
+  background: #edf4ff;
+}
+
+.goods-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.goods-title {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #1a2944;
+  word-break: break-all;
+}
+
+.goods-desc {
+  margin-top: 10rpx;
+  font-size: 24rpx;
+  color: #7b889c;
+  line-height: 1.6;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.goods-bottom {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12rpx;
+}
+
+.list-footer {
+  padding: 14rpx 0 24rpx;
+  text-align: center;
+  font-size: 24rpx;
+  color: #8e99ac;
+}

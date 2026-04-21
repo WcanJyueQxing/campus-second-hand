@@ -1,0 +1,72 @@
+.mine-page {
+  background: linear-gradient(180deg, #eef5ff 0%, #f4f7fc 280rpx);
+}
+
+.profile-panel {
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+}
+
+.avatar {
+  width: 98rpx;
+  height: 98rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #8dbfff, #4b95ff);
+  color: #ffffff;
+  font-size: 38rpx;
+  font-weight: 700;
+  text-align: center;
+  line-height: 98rpx;
+}
+
+.profile-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-name {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #1d2d47;
+}
+
+.profile-tip {
+  margin-top: 8rpx;
+  color: #8090a7;
+  font-size: 24rpx;
+}
+
+.login-empty {
+  padding: 10rpx 0 24rpx;
+}
+
+.menu-item {
+  height: 86rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.menu-text {
+  font-size: 30rpx;
+  color: #20314d;
+}
+
+.menu-arrow {
+  color: #9cabc0;
+  font-size: 34rpx;
+}
+
+.menu-divider {
+  height: 1px;
+  background: #edf2fa;
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0;
+}

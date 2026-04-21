@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+target/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Build output
+dist/
+build/
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.swp
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Uploads (user uploaded files)
+uploads/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Package locks (keep for consistency but ignore actual installs)
+package-lock.json
+yarn.lock
+
+# Maven wrapper (keep the wrapper but not downloaded jars)
+!.mvn/wrapper/maven-wrapper.jar
+
+# Application specific
+*.class
+*.jar
+*.war
+*.ear

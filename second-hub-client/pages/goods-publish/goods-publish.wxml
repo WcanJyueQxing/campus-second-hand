@@ -1,0 +1,74 @@
+<view class="container publish-page">
+  <view class="panel">
+    <view class="section-title">{{pageTitle}}</view>
+    <view class="section-subtitle">信息越完整，成交会更快</view>
+
+    <view class="form-item">
+      <text class="label-text">商品分类</text>
+      <picker
+        mode="selector"
+        range="{{categories}}"
+        range-key="name"
+        value="{{categoryIndex}}"
+        bindchange="onCategoryChange"
+      >
+        <view class="picker-control">
+          {{categories.length ? categories[categoryIndex].name : '请选择分类'}}
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <text class="label-text">商品标题</text>
+      <input
+        class="input-control"
+        placeholder="例如：95新机械键盘"
+        data-field="title"
+        bindinput="onInput"
+        value="{{form.title}}"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label-text">商品描述</text>
+      <textarea
+        class="textarea-control"
+        placeholder="使用时长、配件情况、交易方式等"
+        data-field="description"
+        bindinput="onInput"
+        value="{{form.description}}"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label-text">价格（元）</text>
+      <input
+        class="input-control"
+        placeholder="请输入价格"
+        type="digit"
+        data-field="price"
+        bindinput="onInput"
+        value="{{form.price}}"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label-text">商品图片</text>
+      <button class="ghost-btn upload-btn" bindtap="chooseImage">选择图片并上传</button>
+      <view class="upload-tip">首张会作为封面，最多上传 {{maxImages}} 张，单个文件不超过 {{maxFileSizeText}}</view>
+
+      <view class="preview-grid" wx:if="{{form.images.length > 0}}">
+        <block wx:for="{{form.images}}" wx:key="*this">
+          <view class="preview-item-wrap">
+            <image class="preview-item" src="{{item}}" mode="aspectFill" />
+            <view class="preview-remove" data-index="{{index}}" bindtap="removeImage">×</view>
+          </view>
+        </block>
+      </view>
+    </view>
+
+    <button class="primary-btn submit-btn" bindtap="submit" loading="{{submitting}}" disabled="{{submitting}}">
+      {{submitting ? '提交中...' : submitText}}
+    </button>
+  </view>
+</view>
