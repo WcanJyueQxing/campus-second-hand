@@ -1,4 +1,4 @@
-﻿CREATE DATABASE IF NOT EXISTS `db_second_hub` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+CREATE DATABASE IF NOT EXISTS `db_second_hub` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 USE `db_second_hub`;
 
 CREATE TABLE IF NOT EXISTS `user` (
@@ -171,12 +171,12 @@ CREATE TABLE IF NOT EXISTS `goods_audit` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `admin_user` (`username`,`password`,`real_name`,`role_name`,`status`) VALUES
-('admin','e10adc3949ba59abbe56e057f20f883','系统管理员','SUPER_ADMIN',1)
+('admin','e10adc3949ba59abbe56e057f20f883e','系统管理员','SUPER_ADMIN',1)
 ON DUPLICATE KEY UPDATE `updated_at` = CURRENT_TIMESTAMP;
 
 INSERT INTO `user` (`openid`,`nickname`,`avatar_url`,`phone`,`status`,`password`) VALUES
-('wx_seed_user_001','测试用户A',NULL,'13800000001',1,'e10adc3949ba59abbe56e057f20f883'),
-('wx_seed_user_002','测试用户B',NULL,'13800000002',1,'e10adc3949ba59abbe56e057f20f883')
+('wx_seed_user_001','测试用户A',NULL,'13800000001',1,'e10adc3949ba59abbe56e057f20f883e'),
+('wx_seed_user_002','测试用户B',NULL,'13800000002',1,'e10adc3949ba59abbe56e057f20f883e')
 ON DUPLICATE KEY UPDATE `updated_at` = CURRENT_TIMESTAMP;
 
 INSERT INTO `category` (`name`,`sort`,`status`) VALUES

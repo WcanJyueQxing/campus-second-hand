@@ -169,12 +169,16 @@ public class AdminOpsServiceImpl implements AdminOpsService {
 
     @Override
     public DashboardVO dashboardOverview() {
-        String cached = redisTemplate.opsForValue().get(DASHBOARD_CACHE_KEY);
-        if (cached != null && !cached.isBlank()) {
-            try {
-                return objectMapper.readValue(cached, DashboardVO.class);
-            } catch (JsonProcessingException ignored) {
+        try {
+            String cached = redisTemplate.opsForValue().get(DASHBOARD_CACHE_KEY);
+            if (cached != null && !cached.isBlank()) {
+                try {
+                    return objectMapper.readValue(cached, DashboardVO.class);
+                } catch (JsonProcessingException ignored) {
+                }
             }
+        } catch (Exception ignored) {
+            // Redis 不可用时跳过缓存，直接查询数据库
         }
 
         List<Map<String, Object>> categoryDistribution = new ArrayList<>();
@@ -221,32 +225,63 @@ public class AdminOpsServiceImpl implements AdminOpsService {
                 .build();
         try {
             redisTemplate.opsForValue().set(DASHBOARD_CACHE_KEY, objectMapper.writeValueAsString(dashboardVO), 30, TimeUnit.SECONDS);
-        } catch (JsonProcessingException ignored) {
+        } catch (Exception ignored) {
+            // Redis 不可用时忽略缓存错误
         }
         return dashboardVO;
     }
 
     @Override
-    public List<Map<String, Object>> userGoodsOrderTrend() {
+    public List<Map<String, Object>> userGoodsOrderTrend(String timeRange) {
         LocalDate today = LocalDate.now();
-        List<User> users = userMapper.selectList(new LambdaQueryWrapper<User>().ge(User::getCreatedAt, today.minusDays(6).atStartOfDay()));
-        List<Goods> goodsList = goodsMapper.selectList(new LambdaQueryWrapper<Goods>().ge(Goods::getCreatedAt, today.minusDays(6).atStartOfDay()));
-        List<TradeOrder> orderList = tradeOrderMapper.selectList(new LambdaQueryWrapper<TradeOrder>().ge(TradeOrder::getCreatedAt, today.minusDays(6).atStartOfDay()));
+        LocalDateTime startDate;
+        
+        if ("all".equals(timeRange)) {
+            // 全部数据：从系统开始时间（使用一个很早的日期）
+            startDate = LocalDateTime.of(2020, 1, 1, 0, 0, 0);
+        } else {
+            // 默认近7天
+            startDate = today.minusDays(6).atStartOfDay();
+        }
+        
+        List<User> users = userMapper.selectList(new LambdaQueryWrapper<User>().ge(User::getCreatedAt, startDate));
+        List<Goods> goodsList = goodsMapper.selectList(new LambdaQueryWrapper<Goods>().ge(Goods::getCreatedAt, startDate));
+        List<TradeOrder> orderList = tradeOrderMapper.selectList(new LambdaQueryWrapper<TradeOrder>().ge(TradeOrder::getCreatedAt, startDate));
 
         Map<LocalDate, Long> userMap = users.stream().collect(Collectors.groupingBy(u -> u.getCreatedAt().toLocalDate(), Collectors.counting()));
         Map<LocalDate, Long> goodsMap = goodsList.stream().collect(Collectors.groupingBy(g -> g.getCreatedAt().toLocalDate(), Collectors.counting()));
         Map<LocalDate, Long> orderMap = orderList.stream().collect(Collectors.groupingBy(o -> o.getCreatedAt().toLocalDate(), Collectors.counting()));
 
         List<Map<String, Object>> result = new ArrayList<>();
-        for (int i = 6; i >= 0; i--) {
-            LocalDate date = today.minusDays(i);
-            Map<String, Object> row = new HashMap<>();
-            row.put("date", date.toString());
-            row.put("userCount", userMap.getOrDefault(date, 0L));
-            row.put("goodsCount", goodsMap.getOrDefault(date, 0L));
-            row.put("orderCount", orderMap.getOrDefault(date, 0L));
-            result.add(row);
+        
+        if ("all".equals(timeRange)) {
+            // 全部数据：按实际日期排序
+            List<LocalDate> dates = new ArrayList<>(userMap.keySet());
+            dates.addAll(goodsMap.keySet());
+            dates.addAll(orderMap.keySet());
+            dates = dates.stream().distinct().sorted().collect(Collectors.toList());
+            
+            for (LocalDate date : dates) {
+                Map<String, Object> row = new HashMap<>();
+                row.put("date", date.toString());
+                row.put("userCount", userMap.getOrDefault(date, 0L));
+                row.put("goodsCount", goodsMap.getOrDefault(date, 0L));
+                row.put("orderCount", orderMap.getOrDefault(date, 0L));
+                result.add(row);
+            }
+        } else {
+            // 近7天：固定7天范围
+            for (int i = 6; i >= 0; i--) {
+                LocalDate date = today.minusDays(i);
+                Map<String, Object> row = new HashMap<>();
+                row.put("date", date.toString());
+                row.put("userCount", userMap.getOrDefault(date, 0L));
+                row.put("goodsCount", goodsMap.getOrDefault(date, 0L));
+                row.put("orderCount", orderMap.getOrDefault(date, 0L));
+                result.add(row);
+            }
         }
+        
         return result;
     }
 }

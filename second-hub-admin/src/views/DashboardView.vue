@@ -1,8 +1,8 @@
 <template>
-  <div class="dashboard">
+  <div class="dashboard" v-loading="loading">
     <el-row :gutter="16" class="stat-cards">
       <el-col :xs="12" :sm="8" :md="4" v-for="(item, index) in cards" :key="item.label">
-        <el-card class="stat-card" :class="'stat-card-' + (index + 1)">
+        <el-card class="stat-card" :class="'stat-card-' + (index + 1)" @click="handleCardClick(item.label)">
           <div class="stat-icon">
             <el-icon :size="32"><component :is="item.icon" /></el-icon>
           </div>
@@ -19,12 +19,18 @@
         <el-card class="chart-card">
           <template #header>
             <div class="card-header">
-              <span>近7日趋势</span>
-              <el-radio-group v-model="trendType" size="small">
-                <el-radio-button value="user">用户</el-radio-button>
-                <el-radio-button value="goods">商品</el-radio-button>
-                <el-radio-button value="order">订单</el-radio-button>
-              </el-radio-group>
+              <span>{{ trendTitle }}</span>
+              <div style="display: flex; gap: 12px; align-items: center;">
+                <el-radio-group v-model="trendType" size="small">
+                  <el-radio-button value="user">用户</el-radio-button>
+                  <el-radio-button value="goods">商品</el-radio-button>
+                  <el-radio-button value="order">订单</el-radio-button>
+                </el-radio-group>
+                <el-radio-group v-model="timeRange" size="small">
+                  <el-radio-button value="all">全部</el-radio-button>
+                  <el-radio-button value="7days">近7天</el-radio-button>
+                </el-radio-group>
+              </div>
             </div>
           </template>
           <v-chart :option="trendChartOption" style="height: 320px" />
@@ -62,20 +68,30 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { User, Goods, Document, Money, Warning, Check, Clock } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
+import { useRouter } from 'vue-router'
 import request from '../utils/request'
 
+const router = useRouter()
+
+const loading = ref(true)
 const overview = ref({})
 const trend = ref([])
 const trendType = ref('user')
+const timeRange = ref('7days')
+
+const trendTitle = computed(() => {
+  return timeRange.value === '7days' ? '近7日趋势' : '全部趋势'
+})
 
 const cards = computed(() => [
-  { label: '用户总数', value: overview.value.userCount || 0, icon: User },
-  { label: '商品总数', value: overview.value.goodsCount || 0, icon: Goods },
-  { label: '待审核商品', value: overview.value.pendingGoodsCount || 0, icon: Clock },
-  { label: '订单总数', value: overview.value.orderCount || 0, icon: Document },
-  { label: '待处理举报', value: overview.value.reportCount || 0, icon: Warning }
+  { label: '用户总数', value: overview.value.userCount ?? 0, icon: User },
+  { label: '商品总数', value: overview.value.goodsCount ?? 0, icon: Goods },
+  { label: '待审核商品', value: overview.value.pendingGoodsCount ?? 0, icon: Clock },
+  { label: '订单总数', value: overview.value.orderCount ?? 0, icon: Document },
+  { label: '待处理举报', value: overview.value.reportCount ?? 0, icon: Warning }
 ])
 
 const trendChartOption = computed(() => {
@@ -292,19 +308,51 @@ const userStatusChartOption = computed(() => {
 })
 
 const load = async () => {
+  loading.value = true
   try {
     const [overviewData, trendData] = await Promise.all([
       request.get('/api/admin/dashboard/overview'),
-      request.get('/api/admin/dashboard/trend')
+      request.get('/api/admin/dashboard/trend', { params: { timeRange: timeRange.value } })
     ])
-    overview.value = overviewData
-    trend.value = trendData
+    overview.value = overviewData || {}
+    trend.value = trendData || []
   } catch (error) {
     console.error('加载数据失败:', error)
+    ElMessage.error(error.message || '加载数据失败，请检查后端服务是否启动')
+    overview.value = {}
+    trend.value = []
+  } finally {
+    loading.value = false
   }
 }
 
 onMounted(load)
+
+// 监听时间范围和趋势类型变化
+watch([timeRange, trendType], () => {
+  load()
+}, { immediate: false })
+
+// 处理卡片点击事件
+const handleCardClick = (label) => {
+  switch (label) {
+    case '用户总数':
+      router.push('/users')
+      break
+    case '商品总数':
+      router.push('/goods-audit')
+      break
+    case '待审核商品':
+      router.push('/goods-audit')
+      break
+    case '订单总数':
+      router.push('/orders')
+      break
+    case '待处理举报':
+      router.push('/reports')
+      break
+  }
+}
 </script>
 
 <style scoped>
@@ -325,6 +373,7 @@ onMounted(load)
 .stat-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
 }
 
 .stat-card :deep(.el-card__body) {

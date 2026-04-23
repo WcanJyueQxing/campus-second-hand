@@ -1,0 +1,12 @@
+.gradient
+target/
+*.class
+.mvn/
+node_modules/
+dist/
+deploy/
+game/
+miniprogram_npm/
+__pycache__/
+venv/
+.pyc

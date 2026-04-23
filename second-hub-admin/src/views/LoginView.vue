@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="login-wrap">
     <el-card class="login-card">
       <h2>后台登录</h2>
@@ -27,7 +27,7 @@ const authStore = useAuthStore()
 
 const form = reactive({
   username: 'admin',
-  password: '123456'
+  password:'123456'
 })
 
 const submit = async () => {

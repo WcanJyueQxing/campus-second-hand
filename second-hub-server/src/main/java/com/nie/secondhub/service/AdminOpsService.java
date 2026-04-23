@@ -27,5 +27,5 @@ public interface AdminOpsService {
 
     DashboardVO dashboardOverview();
 
-    List<Map<String, Object>> userGoodsOrderTrend();
+    List<Map<String, Object>> userGoodsOrderTrend(String timeRange);
 }

@@ -1,9 +1,24 @@
-﻿<template>
+<template>
   <el-card>
     <template #header>订单监管</template>
     <el-table :data="list" border>
       <el-table-column prop="id" label="ID" width="80" />
       <el-table-column prop="orderNo" label="订单号" width="220" />
+      <el-table-column label="商品图片" width="100">
+        <template #default="scope">
+          <el-image
+            v-if="scope.row.goodsCover"
+            :src="scope.row.goodsCover"
+            fit="cover"
+            :preview-src-list="[scope.row.goodsCover]"
+            preview-teleported="false"
+            style="width: 60px; height: 60px; border-radius: 4px;"
+          />
+          <div v-else style="width: 60px; height: 60px; border: 1px solid #e4e7ed; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #909399;">
+            无图片
+          </div>
+        </template>
+      </el-table-column>
       <el-table-column prop="goodsTitle" label="商品" />
       <el-table-column prop="amount" label="金额" width="100" />
       <el-table-column prop="orderStatus" label="订单状态" width="160" />
