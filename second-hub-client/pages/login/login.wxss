@@ -1,28 +1,239 @@
 .login-page {
-  padding-top: 60rpx;
-  background: linear-gradient(180deg, #eaf3ff 0%, #f4f7fc 360rpx);
+  padding-top: 80rpx;
+  background: linear-gradient(180deg, #eaf3ff 0%, #f4f7fc 400rpx);
+  min-height: 100vh;
 }
 
-.hero-panel {
+.login-header {
   text-align: center;
-  padding-top: 34rpx;
-  padding-bottom: 34rpx;
+  padding-bottom: 60rpx;
 }
 
-.login-icon {
+.logo-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 140rpx;
+  height: 140rpx;
+  background: linear-gradient(135deg, #6cafff, #2f7df6);
+  border-radius: 32rpx;
+  box-shadow: 0 12rpx 40rpx rgba(47, 125, 246, 0.3);
+  margin-bottom: 24rpx;
+}
+
+.logo-icon {
   width: 94rpx;
   height: 94rpx;
-  margin: 0 auto 18rpx;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #6cafff, #2f7df6);
-  color: #ffffff;
-  font-size: 46rpx;
+  background: #ffffff;
+  border-radius: 20rpx;
+  color: #2f7df6;
+  font-size: 52rpx;
   font-weight: 700;
   line-height: 94rpx;
+  text-align: center;
+}
+
+.app-name {
+  font-size: 44rpx;
+  font-weight: 700;
+  color: #17253d;
+  margin-bottom: 12rpx;
+}
+
+.app-slogan {
+  font-size: 28rpx;
+  color: #8a94a6;
+}
+
+.login-form {
+  padding: 0;
+  overflow: hidden;
+}
+
+.tab-wrapper {
+  display: flex;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.tab-item {
+  flex: 1;
+  height: 96rpx;
+  line-height: 96rpx;
+  text-align: center;
+  font-size: 30rpx;
+  color: #8a94a6;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.tab-item.active {
+  color: #2f7df6;
+  font-weight: 600;
+}
+
+.tab-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80rpx;
+  height: 6rpx;
+  background: linear-gradient(90deg, #5ca6ff, #2f7df6);
+  border-radius: 3rpx;
+}
+
+.tab-content {
+  padding: 40rpx 32rpx;
+}
+
+.form-item {
+  margin-bottom: 28rpx;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 24rpx;
+  width: 40rpx;
+  height: 40rpx;
+  background: #d7e8ff;
+  border-radius: 10rpx;
+  z-index: 1;
+}
+
+.input-icon::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.icon-user::before {
+  width: 20rpx;
+  height: 20rpx;
+  border: 4rpx solid #2f7df6;
+  border-radius: 50%;
+}
+
+.icon-lock::before {
+  width: 16rpx;
+  height: 12rpx;
+  border: 4rpx solid #2f7df6;
+  border-radius: 4rpx 4rpx 0 0;
+  background: transparent;
+  top: 35%;
+}
+
+.icon-nickname::before {
+  width: 18rpx;
+  height: 18rpx;
+  border: 4rpx solid #2f7df6;
+  border-radius: 50%;
+}
+
+.input-control {
+  padding-left: 80rpx !important;
+  height: 88rpx !important;
+  line-height: 88rpx !important;
+}
+
+.remember-row {
+  margin-bottom: 32rpx;
+}
+
+.remember-label {
+  display: flex;
+  align-items: center;
+}
+
+.remember-text {
+  margin-left: 12rpx;
+  font-size: 26rpx;
+  color: #8a94a6;
 }
 
 .login-btn {
   width: 100%;
   margin-top: 10rpx;
   padding: 0;
+}
+
+.wechat-login-wrapper {
+  text-align: center;
+}
+
+.nickname-hint {
+  font-size: 28rpx;
+  color: #8a94a6;
+  margin-bottom: 32rpx;
+}
+
+.avatar-hint {
+  font-size: 24rpx;
+  color: #b0b8c6;
+  margin-top: 16rpx;
+  margin-bottom: 40rpx;
+}
+
+.wechat-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+}
+
+.wechat-icon-small {
+  width: 40rpx;
+  height: 40rpx;
+  background: #07c160;
+  border-radius: 8rpx;
+  position: relative;
+}
+
+.wechat-icon-small::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 22rpx;
+  height: 18rpx;
+  border: 4rpx solid #ffffff;
+  border-radius: 2rpx;
+  border-top: none;
+}
+
+.wechat-icon-small::after {
+  content: '';
+  position: absolute;
+  top: 6rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8rpx;
+  height: 8rpx;
+  background: #ffffff;
+  border-radius: 50%;
+}
+
+.login-footer {
+  text-align: center;
+  margin-top: 60rpx;
+  padding-bottom: 40rpx;
+}
+
+.footer-text {
+  font-size: 22rpx;
+  color: #b0b8c6;
+}
+
+.link-text {
+  font-size: 22rpx;
+  color: #2f7df6;
 }

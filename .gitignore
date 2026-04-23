@@ -1,46 +1,171 @@
-# Dependencies
-node_modules/
+# ====================
+# 校园二手交易平台 .gitignore
+# ====================
+
+# ========== Java / Spring Boot ==========
+# 编译产物
 target/
-
-# IDE
-.idea/
-*.iml
-.vscode/
-
-# Build output
-dist/
-build/
-
-# Logs
-*.log
-logs/
-
-# Temporary files
-*.tmp
-*.swp
-*~
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# Uploads (user uploaded files)
-uploads/
-
-# Environment files
-.env
-.env.local
-.env.*.local
-
-# Package locks (keep for consistency but ignore actual installs)
-package-lock.json
-yarn.lock
-
-# Maven wrapper (keep the wrapper but not downloaded jars)
-!.mvn/wrapper/maven-wrapper.jar
-
-# Application specific
 *.class
 *.jar
 *.war
 *.ear
+*.rar
+
+# Maven
+.mvn/
+mvnw
+mvnw.cmd
+*.m2/
+.mvn/wrapper/maven-wrapper.jar
+
+# IDE - IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+modules/
+*.log
+
+# NetBeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# Eclipse
+.project
+.classpath
+.settings/
+bin/
+
+# JRebel
+rebel.xml
+
+# Spring Boot
+*.pid
+
+# ========== Vue.js / Element Plus ==========
+# node_modules
+second-hub-admin/node_modules/
+node_modules/
+
+# 编译产物
+dist/
+dist-ssr/
+*.local
+
+# 临时文件
+.npm/
+.yarn/
+
+# 日志
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ========== 微信小程序 ==========
+# 编译产物
+second-hub-client/deploy/
+second-hub-client/game/
+second-hub-client/miniprogram_npm/
+
+# 工具链
+*.wcsl
+*.aek
+*.wxml
+*.wxss
+
+# 模拟器数据
+wechat_devtools/
+
+# ========== Python ==========
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# 虚拟环境
+venv/
+ENV/
+env/
+.venv/
+
+# pip日志
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ========== 文档与临时文件 ==========
+*.tmp
+*.bak
+*.swp
+*.swo
+*~
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+
+# 测试输出
+测试/
+测试用例/
+*.xlsx
+!数据库表结构.xlsx
+!测试用例.xlsx
+
+# 论文文档
+*.doc
+*.docx
+*.pdf
+
+# 图片（保留必要的）
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.bmp
+*.webp
+!g203-mouse-top-angle-lilac-gallery-1.webp
+
+# ========== 配置文件（敏感信息） ==========
+# 保留 .gitignore 本身
+# 下面这些文件通常包含敏感信息，不提交
+*.properties
+!pom.xml
+application-local.yml
+application-dev.yml
+application-prod.yml
+
+# ========== 其他 ==========
+*.lock
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+*.suo
+*.user
+*.uts
+*.tsbuildinfo
+.vscode/
+*.md~

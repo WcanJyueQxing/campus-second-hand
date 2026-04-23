@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.nie.secondhub.common.enums.RoleType;
 import com.nie.secondhub.common.exception.BizException;
 import com.nie.secondhub.dto.admin.AdminLoginRequest;
+import com.nie.secondhub.dto.user.AccountLoginRequest;
 import com.nie.secondhub.dto.user.WxLoginRequest;
 import com.nie.secondhub.entity.AdminUser;
 import com.nie.secondhub.entity.User;
@@ -81,6 +82,30 @@ public class AuthServiceImpl implements AuthService {
                 .id(admin.getId())
                 .nickname(admin.getRealName())
                 .role(RoleType.ADMIN.name())
+                .token(token)
+                .build();
+    }
+
+    @Override
+    public LoginVO accountLogin(AccountLoginRequest request) {
+        User user = userMapper.selectOne(new LambdaQueryWrapper<User>()
+                .eq(User::getPhone, request.getAccount())
+                .or()
+                .eq(User::getNickname, request.getAccount()));
+        if (user == null) {
+            throw new BizException(401, "账号不存在，请先注册");
+        }
+        if (user.getStatus() != 1) {
+            throw new BizException(401, "账号已被禁用");
+        }
+        if (!Md5Util.md5(request.getPassword()).equals(user.getPassword())) {
+            throw new BizException(401, "密码错误");
+        }
+        String token = jwtTokenUtil.generateToken(user.getId(), RoleType.USER.name());
+        return LoginVO.builder()
+                .id(user.getId())
+                .nickname(user.getNickname())
+                .role(RoleType.USER.name())
                 .token(token)
                 .build();
     }

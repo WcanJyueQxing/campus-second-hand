@@ -177,12 +177,47 @@ public class AdminOpsServiceImpl implements AdminOpsService {
             }
         }
 
+        List<Map<String, Object>> categoryDistribution = new ArrayList<>();
+        List<Category> categories = categoryMapper.selectList(null);
+        for (Category cat : categories) {
+            Long count = goodsMapper.selectCount(new LambdaQueryWrapper<Goods>().eq(Goods::getCategoryId, cat.getId()));
+            Map<String, Object> item = new HashMap<>();
+            item.put("categoryName", cat.getName());
+            item.put("goodsCount", count);
+            categoryDistribution.add(item);
+        }
+
+        List<Map<String, Object>> orderStatusDistribution = new ArrayList<>();
+        String[] orderStatuses = {"PENDING_PAYMENT", "PAID", "SHIPPED", "COMPLETED", "CANCELLED"};
+        for (String status : orderStatuses) {
+            Long count = tradeOrderMapper.selectCount(new LambdaQueryWrapper<TradeOrder>().eq(TradeOrder::getOrderStatus, status));
+            Map<String, Object> item = new HashMap<>();
+            item.put("status", status);
+            item.put("count", count);
+            orderStatusDistribution.add(item);
+        }
+
+        List<Map<String, Object>> userStatusDistribution = new ArrayList<>();
+        Long normalCount = userMapper.selectCount(new LambdaQueryWrapper<User>().eq(User::getStatus, 1));
+        Long disabledCount = userMapper.selectCount(new LambdaQueryWrapper<User>().eq(User::getStatus, 0));
+        Map<String, Object> normalItem = new HashMap<>();
+        normalItem.put("status", 1);
+        normalItem.put("count", normalCount);
+        userStatusDistribution.add(normalItem);
+        Map<String, Object> disabledItem = new HashMap<>();
+        disabledItem.put("status", 0);
+        disabledItem.put("count", disabledCount);
+        userStatusDistribution.add(disabledItem);
+
         DashboardVO dashboardVO = DashboardVO.builder()
                 .userCount(userMapper.selectCount(null))
                 .goodsCount(goodsMapper.selectCount(null))
                 .pendingGoodsCount(goodsMapper.selectCount(new LambdaQueryWrapper<Goods>().eq(Goods::getStatus, "PENDING")))
                 .orderCount(tradeOrderMapper.selectCount(null))
                 .reportCount(goodsReportMapper.selectCount(new LambdaQueryWrapper<GoodsReport>().eq(GoodsReport::getStatus, "PENDING")))
+                .categoryDistribution(categoryDistribution)
+                .orderStatusDistribution(orderStatusDistribution)
+                .userStatusDistribution(userStatusDistribution)
                 .build();
         try {
             redisTemplate.opsForValue().set(DASHBOARD_CACHE_KEY, objectMapper.writeValueAsString(dashboardVO), 30, TimeUnit.SECONDS);

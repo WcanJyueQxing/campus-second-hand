@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <el-container style="height: 100vh">
     <el-aside width="220px" style="background: #1f2d3d; color: #fff">
       <div class="logo">Second Hub Admin</div>
@@ -9,13 +9,34 @@
         active-text-color="#409eff"
         router
       >
-        <el-menu-item index="/dashboard">数据统计</el-menu-item>
-        <el-menu-item index="/goods-audit">商品审核</el-menu-item>
-        <el-menu-item index="/categories">分类管理</el-menu-item>
-        <el-menu-item index="/users">用户管理</el-menu-item>
-        <el-menu-item index="/reports">举报处理</el-menu-item>
-        <el-menu-item index="/notices">公告管理</el-menu-item>
-        <el-menu-item index="/orders">订单监管</el-menu-item>
+        <el-menu-item index="/dashboard">
+          <el-icon><DataAnalysis /></el-icon>
+          <span>数据统计</span>
+        </el-menu-item>
+        <el-menu-item index="/goods-audit">
+          <el-icon><Goods /></el-icon>
+          <span>商品审核</span>
+        </el-menu-item>
+        <el-menu-item index="/categories">
+          <el-icon><Grid /></el-icon>
+          <span>分类管理</span>
+        </el-menu-item>
+        <el-menu-item index="/users">
+          <el-icon><User /></el-icon>
+          <span>用户管理</span>
+        </el-menu-item>
+        <el-menu-item index="/reports">
+          <el-icon><Warning /></el-icon>
+          <span>举报处理</span>
+        </el-menu-item>
+        <el-menu-item index="/notices">
+          <el-icon><Bell /></el-icon>
+          <span>公告管理</span>
+        </el-menu-item>
+        <el-menu-item index="/orders">
+          <el-icon><List /></el-icon>
+          <span>订单监管</span>
+        </el-menu-item>
       </el-menu>
     </el-aside>
 

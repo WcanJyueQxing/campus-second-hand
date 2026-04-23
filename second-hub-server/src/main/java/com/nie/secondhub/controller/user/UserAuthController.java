@@ -1,6 +1,7 @@
 package com.nie.secondhub.controller.user;
 
 import com.nie.secondhub.common.response.ApiResponse;
+import com.nie.secondhub.dto.user.AccountLoginRequest;
 import com.nie.secondhub.dto.user.WxLoginRequest;
 import com.nie.secondhub.service.AuthService;
 import com.nie.secondhub.vo.LoginVO;
@@ -23,5 +24,10 @@ public class UserAuthController {
     @PostMapping("/wx-login")
     public ApiResponse<LoginVO> wxLogin(@Valid @RequestBody WxLoginRequest request) {
         return ApiResponse.success(authService.wxLogin(request));
+    }
+
+    @PostMapping("/account-login")
+    public ApiResponse<LoginVO> accountLogin(@Valid @RequestBody AccountLoginRequest request) {
+        return ApiResponse.success(authService.accountLogin(request));
     }
 }

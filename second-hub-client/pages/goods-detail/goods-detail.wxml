@@ -13,10 +13,10 @@
 
     <view class="action-row">
       <button wx:if="{{isOwner}}" class="ghost-btn action-btn" bindtap="toEdit">编辑商品</button>
-      <button class="ghost-btn action-btn" bindtap="toggleFavorite">
+      <button wx:if="{{!isOwner}}" class="ghost-btn action-btn" bindtap="toggleFavorite">
         {{detail.favorite ? '取消收藏' : '收藏商品'}}
       </button>
-      <button class="primary-btn action-btn" bindtap="createOrder">立即下单</button>
+      <button wx:if="{{!isOwner}}" class="primary-btn action-btn" bindtap="createOrder">立即下单</button>
     </view>
   </view>
 
