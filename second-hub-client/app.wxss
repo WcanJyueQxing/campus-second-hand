@@ -47,9 +47,21 @@ page {
 }
 
 .primary-btn {
-  background: linear-gradient(135deg, #5ca6ff, #2f7df6);
+  background: linear-gradient(135deg, #4a90e2, #2f7df6);
   color: #ffffff;
   border: none;
+  box-shadow: 0 8rpx 24rpx rgba(47, 125, 246, 0.4);
+  transition: all 0.3s ease;
+}
+
+.primary-btn:hover {
+  transform: translateY(-2rpx);
+  box-shadow: 0 12rpx 32rpx rgba(47, 125, 246, 0.5);
+}
+
+.primary-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 6rpx 16rpx rgba(47, 125, 246, 0.3);
 }
 
 .ghost-btn {

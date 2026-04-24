@@ -7,7 +7,20 @@
     "pages/login/login",
     "pages/goods-detail/goods-detail",
     "pages/favorites/favorites",
-    "pages/my-goods/my-goods"
+    "pages/my-goods/my-goods",
+    "pages/random-name/random-name",
+    "pages/history/history",
+    "pages/settings/settings",
+    "pages/profile-edit/profile-edit",
+    "pages/address/address",
+    "pages/address-edit/address-edit",
+    "pages/privacy-settings/privacy-settings",
+    "pages/notification-settings/notification-settings",
+    "pages/about-us/about-us",
+    "pages/feedback/feedback",
+    "pages/account-security/account-security",
+    "pages/change-password/change-password",
+    "pages/change-phone/change-phone"
   ],
   "window": {
     "navigationBarTextStyle": "black",
@@ -42,5 +55,6 @@
     ]
   },
   "style": "v2",
-  "sitemapLocation": "sitemap.json"
+  "sitemapLocation": "sitemap.json",
+  "requiredPrivateInfos": ["chooseAddress"]
 }

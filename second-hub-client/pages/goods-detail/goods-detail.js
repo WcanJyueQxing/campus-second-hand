@@ -30,6 +30,26 @@ Page({
         detailStatusClass: this.getStatusClass(detail.status),
         isOwner: currentUserId > 0 && Number(detail.userId || 0) === currentUserId
       })
+      
+      // 添加到历史浏览记录
+      this.addToHistory(detail)
+    })
+  },
+
+  // 添加到历史浏览记录
+  addToHistory(goods) {
+    if (!goods || !goods.id) return
+    
+    const historyData = {
+      goodsId: goods.id,
+      title: goods.title,
+      price: goods.price,
+      images: goods.images || []
+    }
+    request({ url: '/api/user/history', method: 'POST', data: historyData }).then(() => {
+      console.log('历史记录添加成功')
+    }).catch(() => {
+      console.log('历史记录添加失败')
     })
   },
 

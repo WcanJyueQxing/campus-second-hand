@@ -2,6 +2,7 @@ package com.nie.secondhub.controller.user;
 
 import com.nie.secondhub.common.response.ApiResponse;
 import com.nie.secondhub.dto.user.AccountLoginRequest;
+import com.nie.secondhub.dto.user.RegisterRequest;
 import com.nie.secondhub.dto.user.WxLoginRequest;
 import com.nie.secondhub.service.AuthService;
 import com.nie.secondhub.vo.LoginVO;
@@ -29,5 +30,11 @@ public class UserAuthController {
     @PostMapping("/account-login")
     public ApiResponse<LoginVO> accountLogin(@Valid @RequestBody AccountLoginRequest request) {
         return ApiResponse.success(authService.accountLogin(request));
+    }
+
+    @PostMapping("/register")
+    public ApiResponse<Void> register(@Valid @RequestBody RegisterRequest request) {
+        authService.register(request);
+        return ApiResponse.success(null);
     }
 }

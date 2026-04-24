@@ -2,6 +2,19 @@ const BASE_URL = 'http://127.0.0.1:8080'
 
 function request({ url, method = 'GET', data = {}, header = {} }) {
   const token = wx.getStorageSync('token')
+
+  // 白名单：登录、注册、验证码、随机姓名 不携带 token，避免 401
+  const whiteList = [
+    '/api/user/auth/account-login',
+    '/api/user/auth/wx-login',
+    '/api/user/auth/register',
+    '/api/user/captcha/generate',
+    '/api/user/random-name/generate',
+    '/api/user/random-name/generate-batch',
+    '/api/user/random-name/init'
+  ]
+  const isWhite = whiteList.some(item => url.includes(item))
+
   return new Promise((resolve, reject) => {
     wx.request({
       url: `${BASE_URL}${url}`,
@@ -9,16 +22,22 @@ function request({ url, method = 'GET', data = {}, header = {} }) {
       data,
       header: {
         'content-type': 'application/json',
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        // 白名单接口不携带 token
+        ...(!isWhite && token ? { Authorization: `Bearer ${token}` } : {}),
         ...header
       },
       success(res) {
         const body = res.data || {}
-        if (body.code === 0) {
+        if (body.code === 0 || body.code === 200) {
           resolve(body.data)
           return
         }
-        wx.showToast({ title: body.message || '请求失败', icon: 'none' })
+        const msg = body.message || (body.code === 401 ? '登录已过期，请重新登录' : '请求失败')
+        if (body.code === 401) {
+          wx.removeStorageSync('token')
+          wx.removeStorageSync('userInfo')
+        }
+        wx.showToast({ title: msg, icon: 'none' })
         reject(body)
       },
       fail(err) {

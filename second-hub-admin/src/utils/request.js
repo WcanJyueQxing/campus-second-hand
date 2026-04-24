@@ -7,7 +7,15 @@ const service = axios.create({
 
 service.interceptors.request.use((config) => {
   const token = localStorage.getItem('admin_token')
-  if (token) {
+  
+  // 白名单：登录、验证码 不携带 token
+  const whiteList = [
+    '/api/admin/auth/login',
+    '/api/user/captcha/generate'
+  ]
+  const isWhite = whiteList.some(item => config.url.includes(item))
+  
+  if (token && !isWhite) {
     config.headers.Authorization = `Bearer ${token}`
   }
   return config

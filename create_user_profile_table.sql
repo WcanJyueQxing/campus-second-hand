@@ -1,0 +1,22 @@
+USE `db_second_hub`;
+
+CREATE TABLE IF NOT EXISTS `user_profile` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `user_id` BIGINT NOT NULL,
+  `nickname` VARCHAR(64) DEFAULT NULL,
+  `avatar_url` VARCHAR(255) DEFAULT NULL,
+  `bio` VARCHAR(500) DEFAULT NULL,
+  `gender` TINYINT DEFAULT NULL COMMENT '1男 2女 0未知',
+  `birthday` DATE DEFAULT NULL,
+  `school` VARCHAR(128) DEFAULT NULL,
+  `major` VARCHAR(128) DEFAULT NULL,
+  `grade` VARCHAR(32) DEFAULT NULL,
+  `hobbies` VARCHAR(500) DEFAULT NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `is_deleted` TINYINT NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_user_id` (`user_id`),
+  KEY `idx_user_profile_user` (`user_id`),
+  CONSTRAINT `fk_user_profile_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

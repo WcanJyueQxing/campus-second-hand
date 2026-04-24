@@ -26,13 +26,19 @@ public class AuthInterceptor implements HandlerInterceptor {
         String path = request.getRequestURI();
         if (path.startsWith("/api/user/auth/") || path.startsWith("/api/admin/auth/")
                 || path.startsWith("/api/user/public/")
+                || path.startsWith("/api/user/captcha/")
+                || path.startsWith("/api/user/random-name/")
                 || path.startsWith("/v3/api-docs") || path.startsWith("/swagger-ui")
                 || path.startsWith("/doc.html") || path.startsWith("/uploads/")
                 || path.startsWith("/error")
                 || path.equals("/api/user/goods/list")
                 || path.matches("/api/user/goods/\\d+$")
                 || path.matches("/api/user/categories")
-                || path.matches("/api/user/comments/\\d+$")) {
+                || path.matches("/api/user/comments/\\d+$")
+                || path.equals("/api/user/goods/my")
+                || path.equals("/api/user/favorites")
+                || path.startsWith("/api/user/orders")
+                || path.equals("/api/user/comments")) {
             return true;
         }
 
@@ -53,7 +59,11 @@ public class AuthInterceptor implements HandlerInterceptor {
         if (path.startsWith("/api/admin/") && !"ADMIN".equals(role)) {
             throw new BizException(403, "无管理员权限");
         }
-        if (path.startsWith("/api/user/") && !"USER".equals(role)) {
+        if (path.startsWith("/api/user/") && !"USER".equals(role) && 
+            !path.startsWith("/api/user/auth/") && 
+            !path.startsWith("/api/user/public/") && 
+            !path.startsWith("/api/user/captcha/") && 
+            !path.startsWith("/api/user/random-name/")) {
             throw new BizException(403, "无用户权限");
         }
 

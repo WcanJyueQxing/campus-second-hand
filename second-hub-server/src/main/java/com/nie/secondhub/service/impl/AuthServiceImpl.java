@@ -5,6 +5,7 @@ import com.nie.secondhub.common.enums.RoleType;
 import com.nie.secondhub.common.exception.BizException;
 import com.nie.secondhub.dto.admin.AdminLoginRequest;
 import com.nie.secondhub.dto.user.AccountLoginRequest;
+import com.nie.secondhub.dto.user.RegisterRequest;
 import com.nie.secondhub.dto.user.WxLoginRequest;
 import com.nie.secondhub.entity.AdminUser;
 import com.nie.secondhub.entity.User;
@@ -16,12 +17,20 @@ import com.nie.secondhub.service.support.WechatAuthClient;
 import com.nie.secondhub.util.Md5Util;
 import com.nie.secondhub.vo.LoginVO;
 import jakarta.annotation.Resource;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
+/**
+ * 认证服务实现类
+ *
+ * @author nie
+ */
 @Service
 public class AuthServiceImpl implements AuthService {
+
+    private static final String CAPTCHA_CODE_KEY = "captcha_code_";
 
     @Resource
     private UserMapper userMapper;
@@ -31,6 +40,8 @@ public class AuthServiceImpl implements AuthService {
     private JwtTokenUtil jwtTokenUtil;
     @Resource
     private WechatAuthClient wechatAuthClient;
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
     @Override
     public LoginVO wxLogin(WxLoginRequest request) {
@@ -69,6 +80,17 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public LoginVO adminLogin(AdminLoginRequest request) {
+        // 验证码验证
+        String verifyKey = CAPTCHA_CODE_KEY + request.getCaptchaUuid();
+        String cachedCode = stringRedisTemplate.opsForValue().get(verifyKey);
+        if (cachedCode == null) {
+            throw new BizException(400, "验证码已过期，请重新获取");
+        }
+        if (!cachedCode.equalsIgnoreCase(request.getCaptchaCode().trim())) {
+            throw new BizException(400, "验证码错误");
+        }
+        stringRedisTemplate.delete(verifyKey);
+        
         AdminUser admin = adminUserMapper.selectOne(new LambdaQueryWrapper<AdminUser>()
                 .eq(AdminUser::getUsername, request.getUsername()));
         if (admin == null || admin.getStatus() != 1) {
@@ -88,6 +110,26 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public LoginVO accountLogin(AccountLoginRequest request) {
+        String uuid = request.getCaptchaUuid();
+        String captchaCode = request.getCaptchaCode();
+
+        if (uuid == null || uuid.isBlank() || captchaCode == null || captchaCode.isBlank()) {
+            throw new BizException(400, "验证码不能为空");
+        }
+
+        String verifyKey = CAPTCHA_CODE_KEY + uuid;
+        String cachedCode = stringRedisTemplate.opsForValue().get(verifyKey);
+
+        if (cachedCode == null) {
+            throw new BizException(400, "验证码已过期，请重新获取");
+        }
+
+        if (!cachedCode.equalsIgnoreCase(captchaCode.trim())) {
+            throw new BizException(400, "验证码错误");
+        }
+
+        stringRedisTemplate.delete(verifyKey);
+
         User user = userMapper.selectOne(new LambdaQueryWrapper<User>()
                 .eq(User::getPhone, request.getAccount())
                 .or()
@@ -108,5 +150,45 @@ public class AuthServiceImpl implements AuthService {
                 .role(RoleType.USER.name())
                 .token(token)
                 .build();
+    }
+
+    @Override
+    public void register(RegisterRequest request) {
+        String uuid = request.getCaptchaUuid();
+        String captchaCode = request.getCaptchaCode();
+
+        if (uuid == null || uuid.isBlank() || captchaCode == null || captchaCode.isBlank()) {
+            throw new BizException(400, "验证码不能为空");
+        }
+
+        String verifyKey = CAPTCHA_CODE_KEY + uuid;
+        String cachedCode = stringRedisTemplate.opsForValue().get(verifyKey);
+
+        if (cachedCode == null) {
+            throw new BizException(400, "验证码已过期，请重新获取");
+        }
+
+        if (!cachedCode.equalsIgnoreCase(captchaCode.trim())) {
+            throw new BizException(400, "验证码错误");
+        }
+
+        stringRedisTemplate.delete(verifyKey);
+
+        // 检查用户名是否已存在
+        User existingUser = userMapper.selectOne(new LambdaQueryWrapper<User>()
+                .eq(User::getNickname, request.getUsername()));
+        if (existingUser != null) {
+            throw new BizException(400, "用户名已存在");
+        }
+
+        // 创建新用户
+        User user = new User();
+        user.setNickname(request.getUsername());
+        user.setPassword(Md5Util.md5(request.getPassword()));
+        user.setStatus(1);
+        user.setCreatedAt(LocalDateTime.now());
+        user.setUpdatedAt(LocalDateTime.now());
+
+        userMapper.insert(user);
     }
 }

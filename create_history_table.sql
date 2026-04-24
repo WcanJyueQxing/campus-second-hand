@@ -1,0 +1,17 @@
+USE `db_second_hub`;
+
+CREATE TABLE IF NOT EXISTS `history_record` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `user_id` BIGINT NOT NULL,
+  `goods_id` BIGINT NOT NULL,
+  `title` VARCHAR(128) NOT NULL,
+  `price` DECIMAL(10,2) NOT NULL,
+  `images` VARCHAR(255) DEFAULT NULL,
+  `view_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `is_deleted` TINYINT NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `idx_history_user` (`user_id`),
+  KEY `idx_history_view_time` (`view_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

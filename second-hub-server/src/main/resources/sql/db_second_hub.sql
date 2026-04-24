@@ -170,6 +170,22 @@ CREATE TABLE IF NOT EXISTS `goods_audit` (
   KEY `idx_audit_goods` (`goods_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE IF NOT EXISTS `history_record` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `user_id` BIGINT NOT NULL,
+  `goods_id` BIGINT NOT NULL,
+  `title` VARCHAR(128) NOT NULL,
+  `price` DECIMAL(10,2) NOT NULL,
+  `images` VARCHAR(255) DEFAULT NULL,
+  `view_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `is_deleted` TINYINT NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `idx_history_user` (`user_id`),
+  KEY `idx_history_view_time` (`view_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 INSERT INTO `admin_user` (`username`,`password`,`real_name`,`role_name`,`status`) VALUES
 ('admin','e10adc3949ba59abbe56e057f20f883e','系统管理员','SUPER_ADMIN',1)
 ON DUPLICATE KEY UPDATE `updated_at` = CURRENT_TIMESTAMP;

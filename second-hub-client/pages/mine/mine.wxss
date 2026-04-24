@@ -1,72 +1,247 @@
-.mine-page {
-  background: linear-gradient(180deg, #eef5ff 0%, #f4f7fc 280rpx);
+.mine-container {
+  background-color: #f5f5f5;
+  min-height: 100vh;
+  padding: 20rpx;
+  padding-bottom: 140rpx;
 }
 
-.profile-panel {
+/* 用户信息卡片 */
+.user-card {
+  background-color: #fff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+}
+
+.user-info {
   display: flex;
   align-items: center;
-  gap: 18rpx;
+  position: relative;
+}
+
+.user-info:active {
+  opacity: 0.8;
 }
 
 .avatar {
-  width: 98rpx;
-  height: 98rpx;
+  width: 120rpx;
+  height: 120rpx;
   border-radius: 50%;
-  background: linear-gradient(135deg, #8dbfff, #4b95ff);
-  color: #ffffff;
-  font-size: 38rpx;
-  font-weight: 700;
-  text-align: center;
-  line-height: 98rpx;
+  background-color: #f0f0f0;
+  flex-shrink: 0;
 }
 
-.profile-main {
+.user-detail {
   flex: 1;
-  min-width: 0;
-}
-
-.profile-name {
-  font-size: 34rpx;
-  font-weight: 700;
-  color: #1d2d47;
-}
-
-.profile-tip {
-  margin-top: 8rpx;
-  color: #8090a7;
-  font-size: 24rpx;
-}
-
-.login-empty {
-  padding: 10rpx 0 24rpx;
-}
-
-.menu-item {
-  height: 86rpx;
+  margin-left: 24rpx;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+}
+
+.username {
+  font-size: 32rpx;
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 8rpx;
+}
+
+.welcome-text {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.arrow {
+  width: 16rpx;
+  height: 16rpx;
+  border-top: 2rpx solid #ccc;
+  border-right: 2rpx solid #ccc;
+  transform: rotate(45deg);
+  position: absolute;
+  right: 0;
+  top: 50%;
+  margin-top: -8rpx;
+}
+
+.login-btn-wrapper {
+  margin-top: 30rpx;
+  display: flex;
+  justify-content: center;
+}
+
+.login-btn {
+  width: 200rpx;
+  height: 70rpx;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  font-size: 28rpx;
+  border-radius: 35rpx;
+  line-height: 70rpx;
+  text-align: center;
+  border: none;
+}
+
+.login-btn:active {
+  opacity: 0.9;
+  transform: scale(0.98);
+}
+
+/* 我的交易模块 */
+.trade-card {
+  background-color: #fff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+}
+
+.trade-title {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 30rpx;
+}
+
+.trade-items {
+  display: flex;
   justify-content: space-between;
 }
 
-.menu-text {
-  font-size: 30rpx;
-  color: #20314d;
+.trade-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
 }
 
-.menu-arrow {
-  color: #9cabc0;
-  font-size: 34rpx;
+.trade-item:active {
+  opacity: 0.7;
 }
 
-.menu-divider {
-  height: 1px;
-  background: #edf2fa;
-}
-
-.logout-btn {
+.trade-icon {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-bottom: 12rpx;
+}
+
+.icon-publish {
+  background-color: #e8f4ff;
+}
+
+.icon-sold {
+  background-color: #fff3e8;
+}
+
+.icon-bought {
+  background-color: #e8fff0;
+}
+
+.icon-review {
+  background-color: #fff0f0;
+}
+
+.icon-text {
+  font-size: 36rpx;
+}
+
+.trade-label {
+  font-size: 22rpx;
+  color: #666;
+  margin-bottom: 8rpx;
+}
+
+.trade-count {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+/* 功能列表模块 */
+.function-card {
+  background-color: #fff;
+  border-radius: 16rpx;
+  overflow: hidden;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+}
+
+.function-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32rpx 30rpx;
+  position: relative;
+}
+
+.function-item:active {
+  background-color: #f8f8f8;
+}
+
+.function-label {
+  font-size: 28rpx;
+  color: #333;
+}
+
+.function-divider {
+  height: 1rpx;
+  background-color: #f0f0f0;
+  margin: 0 30rpx;
+}
+
+/* 退出登录按钮 */
+.logout-wrapper {
+  margin-top: 40rpx;
+  padding: 0 20rpx;
+}
+
+.logout-btn {
+  width: 100%;
+  height: 88rpx;
+  background-color: #fff0f0;
+  color: #ff4d4f;
+  font-size: 30rpx;
+  border-radius: 44rpx;
+  line-height: 88rpx;
   text-align: center;
-  padding: 0;
+  border: 2rpx solid #ff4d4f;
+}
+
+.logout-btn:active {
+  background-color: #ffe8e8;
+}
+
+@media (min-width: 750rpx) {
+  .mine-container {
+    padding: 40rpx;
+    padding-bottom: 180rpx;
+  }
+  
+  .avatar {
+    width: 140rpx;
+    height: 140rpx;
+  }
+  
+  .username {
+    font-size: 36rpx;
+  }
+  
+  .welcome-text {
+    font-size: 26rpx;
+  }
+  
+  .trade-card {
+    padding: 40rpx;
+  }
+  
+  .trade-icon {
+    width: 100rpx;
+    height: 100rpx;
+  }
+  
+  .function-item {
+    padding: 40rpx 36rpx;
+  }
 }
