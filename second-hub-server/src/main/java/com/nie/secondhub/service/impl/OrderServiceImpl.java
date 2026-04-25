@@ -185,6 +185,28 @@ public class OrderServiceImpl implements OrderService {
         tradeOrderMapper.updateById(order);
     }
 
+    @Override
+    public Long countSellerOrders(Long sellerId) {
+        LambdaQueryWrapper<TradeOrder> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(TradeOrder::getSellerId, sellerId);
+        return tradeOrderMapper.selectCount(wrapper);
+    }
+
+    @Override
+    public Long countBuyerOrders(Long buyerId) {
+        LambdaQueryWrapper<TradeOrder> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(TradeOrder::getBuyerId, buyerId);
+        return tradeOrderMapper.selectCount(wrapper);
+    }
+
+    @Override
+    public Long countPendingReviewOrders(Long buyerId) {
+        LambdaQueryWrapper<TradeOrder> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(TradeOrder::getBuyerId, buyerId);
+        wrapper.eq(TradeOrder::getOrderStatus, OrderStatus.COMPLETED.name());
+        return tradeOrderMapper.selectCount(wrapper);
+    }
+
     private void completeOrder(TradeOrder order) {
         order.setOrderStatus(OrderStatus.COMPLETED.name());
         order.setFinishedAt(LocalDateTime.now());
@@ -257,6 +279,7 @@ public class OrderServiceImpl implements OrderService {
         vo.setPaidAt(order.getPaidAt());
         vo.setFinishedAt(order.getFinishedAt());
         vo.setCreatedAt(order.getCreatedAt());
+        vo.setHasComment(false);
         return vo;
     }
 

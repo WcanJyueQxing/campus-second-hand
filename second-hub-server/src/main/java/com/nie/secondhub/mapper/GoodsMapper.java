@@ -4,4 +4,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.nie.secondhub.entity.Goods;
 
 public interface GoodsMapper extends BaseMapper<Goods> {
+    void updateFavoriteCount(Long goodsId, int delta);
 }

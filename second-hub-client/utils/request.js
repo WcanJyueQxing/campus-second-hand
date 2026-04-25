@@ -22,8 +22,8 @@ function request({ url, method = 'GET', data = {}, header = {} }) {
       data,
       header: {
         'content-type': 'application/json',
-        // 白名单接口不携带 token
-        ...(!isWhite && token ? { Authorization: `Bearer ${token}` } : {}),
+        // 白名单接口在用户登录时也携带 token，以便后端识别用户身份
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...header
       },
       success(res) {
@@ -36,6 +36,8 @@ function request({ url, method = 'GET', data = {}, header = {} }) {
         if (body.code === 401) {
           wx.removeStorageSync('token')
           wx.removeStorageSync('userInfo')
+          // 跳转到登录页面
+          wx.navigateTo({ url: '/pages/login/login' })
         }
         wx.showToast({ title: msg, icon: 'none' })
         reject(body)

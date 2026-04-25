@@ -6,6 +6,20 @@ Page({
     list: []
   },
 
+  onLoad(options) {
+    if (options.type) {
+      if (options.type === 'sold') {
+        this.setData({ asRole: 'seller' })
+      } else if (options.type === 'bought') {
+        this.setData({ asRole: 'buyer' })
+      } else if (options.type === 'pending_review') {
+        this.setData({ asRole: 'buyer' })
+        this.loadPendingReviews()
+        return
+      }
+    }
+  },
+
   onShow() {
     const tabBar = this.getTabBar && this.getTabBar()
     if (tabBar) {
@@ -40,12 +54,37 @@ Page({
     })
   },
 
+  loadPendingReviews() {
+    request({
+      url: '/api/user/orders/my',
+      data: { asRole: 'buyer', pageNo: 1, pageSize: 20 }
+    }).then((data) => {
+      const records = data.records || []
+      const list = records
+        .filter(item => item.orderStatus === 'COMPLETED' && !item.hasComment)
+        .map((item) => ({
+          ...item,
+          _orderStatusText: this.getOrderStatusText(item.orderStatus),
+          _orderStatusClass: this.getOrderStatusClass(item.orderStatus),
+          _payStatusText: this.getPayStatusText(item.payStatus),
+          _payStatusClass: this.getPayStatusClass(item.payStatus)
+        }))
+      this.setData({ list })
+    })
+  },
+
   getOrderStatusText(status) {
     const text = String(status || '')
     if (text === '1' || text.toUpperCase() === 'PENDING') return '待处理'
     if (text === '2' || text.toUpperCase() === 'PROCESSING') return '处理中'
     if (text === '3' || text.toUpperCase() === 'FINISHED') return '已完成'
     if (text === '4' || text.toUpperCase() === 'CANCELLED') return '已取消'
+    if (text.toUpperCase() === 'PENDING_PAYMENT') return '待支付'
+    if (text.toUpperCase() === 'PAID') return '已支付'
+    if (text.toUpperCase() === 'SELLER_CONFIRMED') return '卖家已确认'
+    if (text.toUpperCase() === 'BUYER_CONFIRMED') return '买家已确认'
+    if (text.toUpperCase() === 'COMPLETED') return '已完成'
+    if (text.toUpperCase() === 'CANCELLED') return '已取消'
     return text || '未知'
   },
 
@@ -55,6 +94,12 @@ Page({
     if (text === '2' || text === 'PROCESSING') return 'tag--info'
     if (text === '3' || text === 'FINISHED') return 'tag--success'
     if (text === '4' || text === 'CANCELLED') return 'tag--danger'
+    if (text === 'PENDING_PAYMENT') return 'tag--warning'
+    if (text === 'PAID') return 'tag--info'
+    if (text === 'SELLER_CONFIRMED') return 'tag--info'
+    if (text === 'BUYER_CONFIRMED') return 'tag--info'
+    if (text === 'COMPLETED') return 'tag--success'
+    if (text === 'CANCELLED') return 'tag--danger'
     return 'tag--info'
   },
 

@@ -106,7 +106,7 @@ const trendChartOption = computed(() => {
     order: '新增订单'
   }
   const dataKey = `${trendType.value}Count`
-  
+
   return {
     tooltip: {
       trigger: 'axis',
@@ -119,7 +119,12 @@ const trendChartOption = computed(() => {
       right: '4%',
       bottom: '3%',
       top: '10%',
-      containLabel: true
+      outerBounds: {
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0
+      }
     },
     xAxis: {
       type: 'category',
@@ -169,7 +174,7 @@ const categoryChartOption = computed(() => {
     value: item.goodsCount,
     itemStyle: { color: colors[index % colors.length] }
   }))
-  
+
   return {
     tooltip: {
       trigger: 'item',
@@ -217,13 +222,13 @@ const orderStatusChartOption = computed(() => {
     COMPLETED: { name: '已完成', color: '#67c23a' },
     CANCELLED: { name: '已取消', color: '#909399' }
   }
-  
+
   const orderStats = overview.value.orderStatusDistribution || []
   const data = Object.entries(statusMap).map(([key, val]) => {
     const found = orderStats.find(s => s.status === key)
     return { name: val.name, value: found ? found.count : 0, itemStyle: { color: val.color } }
   })
-  
+
   return {
     tooltip: {
       trigger: 'item',
@@ -260,7 +265,7 @@ const userStatusChartOption = computed(() => {
   const userStats = overview.value.userStatusDistribution || []
   const normalCount = userStats.find(s => s.status === 1)?.count || 0
   const disabledCount = userStats.find(s => s.status === 0)?.count || 0
-  
+
   return {
     tooltip: {
       trigger: 'axis',
@@ -274,7 +279,7 @@ const userStatusChartOption = computed(() => {
       bottom: '0',
       textStyle: { color: '#606266' }
     },
-    grid: { left: '3%', right: '4%', bottom: '15%', top: '10%', containLabel: true },
+    grid: { left: '3%', right: '4%', bottom: '15%', top: '10%', outerBounds: { left: 0, right: 0, top: 0, bottom: 0 } },
     xAxis: {
       type: 'category',
       data: ['正常用户', '禁用用户'],
@@ -328,12 +333,10 @@ const load = async () => {
 
 onMounted(load)
 
-// 监听时间范围和趋势类型变化
 watch([timeRange, trendType], () => {
   load()
 }, { immediate: false })
 
-// 处理卡片点击事件
 const handleCardClick = (label) => {
   switch (label) {
     case '用户总数':

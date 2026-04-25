@@ -11,7 +11,7 @@
             :src="scope.row.goodsCover"
             fit="cover"
             :preview-src-list="[scope.row.goodsCover]"
-            preview-teleported="false"
+            :preview-teleported="false"
             style="width: 60px; height: 60px; border-radius: 4px;"
           />
           <div v-else style="width: 60px; height: 60px; border: 1px solid #e4e7ed; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #909399;">

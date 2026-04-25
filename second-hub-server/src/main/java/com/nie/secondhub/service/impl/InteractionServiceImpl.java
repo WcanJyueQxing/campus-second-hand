@@ -64,9 +64,7 @@ public class InteractionServiceImpl implements InteractionService {
         favorite.setUpdatedAt(LocalDateTime.now());
         goodsFavoriteMapper.insert(favorite);
 
-        goods.setFavoriteCount(goods.getFavoriteCount() + 1);
-        goods.setUpdatedAt(LocalDateTime.now());
-        goodsMapper.updateById(goods);
+        goodsMapper.updateFavoriteCount(goodsId, 1);
     }
 
     @Override
@@ -79,12 +77,7 @@ public class InteractionServiceImpl implements InteractionService {
             return;
         }
         goodsFavoriteMapper.deleteById(exist.getId());
-        Goods goods = goodsMapper.selectById(goodsId);
-        if (goods != null && goods.getFavoriteCount() > 0) {
-            goods.setFavoriteCount(goods.getFavoriteCount() - 1);
-            goods.setUpdatedAt(LocalDateTime.now());
-            goodsMapper.updateById(goods);
-        }
+        goodsMapper.updateFavoriteCount(goodsId, -1);
     }
 
     @Override

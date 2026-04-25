@@ -1,4 +1,4 @@
-package com.nie;
+package com.nie.secondhub;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;

@@ -22,4 +22,10 @@ public interface OrderService {
     PageResponse<OrderVO> adminOrders(Long pageNo, Long pageSize, String orderStatus);
 
     void adminCancel(Long orderId);
+
+    Long countSellerOrders(Long sellerId);
+
+    Long countBuyerOrders(Long buyerId);
+
+    Long countPendingReviewOrders(Long buyerId);
 }

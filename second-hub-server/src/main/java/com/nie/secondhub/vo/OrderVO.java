@@ -25,4 +25,5 @@ public class OrderVO {
     private LocalDateTime paidAt;
     private LocalDateTime finishedAt;
     private LocalDateTime createdAt;
+    private Boolean hasComment;
 }

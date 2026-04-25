@@ -35,11 +35,6 @@ Page({
       return
     }
 
-    if (content.length < 10) {
-      wx.showToast({ title: '反馈内容太短，请详细描述', icon: 'none' })
-      return
-    }
-
     wx.showLoading({ title: '提交中...' })
     request({
       url: '/api/feedback',

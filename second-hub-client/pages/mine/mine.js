@@ -66,22 +66,19 @@ Page({
 
   loadTradeCounts() {
     request({ url: '/api/user/goods/my' }).then((data) => {
-      if (data && data.list) {
-        this.setData({ publishCount: data.list.length || 0 })
+      if (data && data.records) {
+        this.setData({ publishCount: data.records.length || 0 })
       }
     }).catch(() => {
     })
 
-    request({ url: '/api/user/orders/my?asRole=seller' }).then((data) => {
-      if (data && data.list) {
-        this.setData({ soldCount: data.list.length || 0 })
-      }
-    }).catch(() => {
-    })
-
-    request({ url: '/api/user/orders/my?asRole=buyer' }).then((data) => {
-      if (data && data.list) {
-        this.setData({ boughtCount: data.list.length || 0 })
+    request({ url: '/api/user/orders/stats' }).then((data) => {
+      if (data) {
+        this.setData({
+          soldCount: data.soldCount || 0,
+          boughtCount: data.boughtCount || 0,
+          reviewCount: data.pendingReviewCount || 0
+        })
       }
     }).catch(() => {
     })

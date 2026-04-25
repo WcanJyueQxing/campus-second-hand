@@ -52,25 +52,33 @@ public class NameInitializer {
      */
     @PostConstruct
     public void initNameLibrary() {
-        // 初始化姓氏库
-        initSurnames();
-        // 初始化男名库
-        initBoyNames();
-        // 初始化女名库
-        initGirlNames();
-        System.out.println("姓名库初始化完成！");
+        try {
+            // 初始化姓氏库
+            initSurnames();
+            // 初始化男名库
+            initBoyNames();
+            // 初始化女名库
+            initGirlNames();
+            System.out.println("姓名库初始化完成！");
+        } catch (Exception e) {
+            System.out.println("Redis不可用，姓名库将使用内存中的数据");
+        }
     }
 
     /**
      * 初始化姓氏库
      */
     private void initSurnames() {
-        String key = "random:name:first";
-        // 清空现有数据
-        stringRedisTemplate.delete(key);
-        // 添加姓氏
-        for (String surname : SURNAMES) {
-            stringRedisTemplate.opsForList().rightPush(key, surname);
+        try {
+            String key = "random:name:first";
+            // 清空现有数据
+            stringRedisTemplate.delete(key);
+            // 添加姓氏
+            for (String surname : SURNAMES) {
+                stringRedisTemplate.opsForList().rightPush(key, surname);
+            }
+        } catch (Exception e) {
+            // Redis不可用时忽略
         }
     }
 
@@ -78,12 +86,16 @@ public class NameInitializer {
      * 初始化男名库
      */
     private void initBoyNames() {
-        String key = "random:name:boy";
-        // 清空现有数据
-        stringRedisTemplate.delete(key);
-        // 添加男名
-        for (String name : BOY_NAMES) {
-            stringRedisTemplate.opsForList().rightPush(key, name);
+        try {
+            String key = "random:name:boy";
+            // 清空现有数据
+            stringRedisTemplate.delete(key);
+            // 添加男名
+            for (String name : BOY_NAMES) {
+                stringRedisTemplate.opsForList().rightPush(key, name);
+            }
+        } catch (Exception e) {
+            // Redis不可用时忽略
         }
     }
 
@@ -91,12 +103,16 @@ public class NameInitializer {
      * 初始化女名库
      */
     private void initGirlNames() {
-        String key = "random:name:girl";
-        // 清空现有数据
-        stringRedisTemplate.delete(key);
-        // 添加女名
-        for (String name : GIRL_NAMES) {
-            stringRedisTemplate.opsForList().rightPush(key, name);
+        try {
+            String key = "random:name:girl";
+            // 清空现有数据
+            stringRedisTemplate.delete(key);
+            // 添加女名
+            for (String name : GIRL_NAMES) {
+                stringRedisTemplate.opsForList().rightPush(key, name);
+            }
+        } catch (Exception e) {
+            // Redis不可用时忽略
         }
     }
 
@@ -132,14 +148,19 @@ public class NameInitializer {
      * @return 随机姓氏
      */
     private String getRandomSurname() {
-        String key = "random:name:first";
-        Long size = stringRedisTemplate.opsForList().size(key);
-        if (size == null || size == 0) {
-            initSurnames();
-            size = (long) SURNAMES.size();
+        try {
+            String key = "random:name:first";
+            Long size = stringRedisTemplate.opsForList().size(key);
+            if (size == null || size == 0) {
+                initSurnames();
+                size = (long) SURNAMES.size();
+            }
+            long index = RandomUtil.randomLong(0, size);
+            return stringRedisTemplate.opsForList().index(key, index);
+        } catch (Exception e) {
+            // Redis不可用时使用内存中的数据
+            return SURNAMES.get(RandomUtil.randomInt(0, SURNAMES.size()));
         }
-        long index = RandomUtil.randomLong(0, size);
-        return stringRedisTemplate.opsForList().index(key, index);
     }
 
     /**
@@ -148,28 +169,42 @@ public class NameInitializer {
      * @return 随机名字
      */
     private String getRandomName(String gender) {
-        String key;
-        if ("male".equals(gender)) {
-            key = "random:name:boy";
-        } else if ("female".equals(gender)) {
-            key = "random:name:girl";
-        } else {
-            // 随机性别
-            key = RandomUtil.randomBoolean() ? "random:name:boy" : "random:name:girl";
-        }
-
-        Long size = stringRedisTemplate.opsForList().size(key);
-        if (size == null || size == 0) {
-            if ("random:name:boy".equals(key)) {
-                initBoyNames();
-                size = (long) BOY_NAMES.size();
+        try {
+            String key;
+            if ("male".equals(gender)) {
+                key = "random:name:boy";
+            } else if ("female".equals(gender)) {
+                key = "random:name:girl";
             } else {
-                initGirlNames();
-                size = (long) GIRL_NAMES.size();
+                // 随机性别
+                key = RandomUtil.randomBoolean() ? "random:name:boy" : "random:name:girl";
+            }
+
+            Long size = stringRedisTemplate.opsForList().size(key);
+            if (size == null || size == 0) {
+                if ("random:name:boy".equals(key)) {
+                    initBoyNames();
+                    size = (long) BOY_NAMES.size();
+                } else {
+                    initGirlNames();
+                    size = (long) GIRL_NAMES.size();
+                }
+            }
+
+            long index = RandomUtil.randomLong(0, size);
+            return stringRedisTemplate.opsForList().index(key, index);
+        } catch (Exception e) {
+            // Redis不可用时使用内存中的数据
+            if ("male".equals(gender)) {
+                return BOY_NAMES.get(RandomUtil.randomInt(0, BOY_NAMES.size()));
+            } else if ("female".equals(gender)) {
+                return GIRL_NAMES.get(RandomUtil.randomInt(0, GIRL_NAMES.size()));
+            } else {
+                // 随机性别
+                return RandomUtil.randomBoolean() ? 
+                    BOY_NAMES.get(RandomUtil.randomInt(0, BOY_NAMES.size())) : 
+                    GIRL_NAMES.get(RandomUtil.randomInt(0, GIRL_NAMES.size()));
             }
         }
-
-        long index = RandomUtil.randomLong(0, size);
-        return stringRedisTemplate.opsForList().index(key, index);
     }
 }

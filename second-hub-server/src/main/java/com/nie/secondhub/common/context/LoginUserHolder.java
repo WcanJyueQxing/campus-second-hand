@@ -16,7 +16,10 @@ public final class LoginUserHolder {
 
     public static Long requireUserId() {
         LoginUser loginUser = HOLDER.get();
-        return loginUser == null ? null : loginUser.getUserId();
+        if (loginUser == null) {
+            throw new RuntimeException("未登录或令牌缺失");
+        }
+        return loginUser.getUserId();
     }
 
     public static void clear() {

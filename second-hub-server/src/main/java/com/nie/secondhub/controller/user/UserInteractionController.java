@@ -37,7 +37,11 @@ public class UserInteractionController {
     @GetMapping("/favorites")
     public ApiResponse<PageResponse<GoodsVO>> myFavorites(@RequestParam(defaultValue = "1") @Min(1) Long pageNo,
                                                           @RequestParam(defaultValue = "10") @Min(1) Long pageSize) {
-        return ApiResponse.success(interactionService.myFavorites(LoginUserHolder.requireUserId(), pageNo, pageSize));
+        Long userId = LoginUserHolder.get() != null ? LoginUserHolder.get().getUserId() : null;
+        if (userId == null) {
+            return ApiResponse.success(PageResponse.<GoodsVO>builder().total(0L).pageNo(pageNo).pageSize(pageSize).records(java.util.Collections.emptyList()).build());
+        }
+        return ApiResponse.success(interactionService.myFavorites(userId, pageNo, pageSize));
     }
 
     @PostMapping("/comments")

@@ -24,7 +24,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         }
 
         String path = request.getRequestURI();
-        if (path.startsWith("/api/user/auth/") || path.startsWith("/api/admin/auth/")
+        boolean isWhiteList = path.startsWith("/api/user/auth/") || path.startsWith("/api/admin/auth/")
                 || path.startsWith("/api/user/public/")
                 || path.startsWith("/api/user/captcha/")
                 || path.startsWith("/api/user/random-name/")
@@ -36,13 +36,25 @@ public class AuthInterceptor implements HandlerInterceptor {
                 || path.matches("/api/user/categories")
                 || path.matches("/api/user/comments/\\d+$")
                 || path.equals("/api/user/goods/my")
-                || path.equals("/api/user/favorites")
-                || path.startsWith("/api/user/orders")
-                || path.equals("/api/user/comments")) {
+                || path.equals("/api/user/favorites");
+
+        // 检查是否携带token，如果携带则解析并设置用户信息
+        String token = request.getHeader("Authorization");
+        if (token != null && token.startsWith("Bearer ")) {
+            try {
+                Claims claims = jwtTokenUtil.parse(token.substring(7));
+                Long userId = Long.parseLong(claims.getSubject());
+                String role = String.valueOf(claims.get("role"));
+                LoginUserHolder.set(LoginUser.builder().userId(userId).role(role).build());
+            } catch (Exception ex) {
+                // token无效，不影响白名单接口的访问
+            }
+        }
+
+        if (isWhiteList) {
             return true;
         }
 
-        String token = request.getHeader("Authorization");
         if (token == null || !token.startsWith("Bearer ")) {
             throw new BizException(401, "未登录或令牌缺失");
         }
@@ -67,7 +79,6 @@ public class AuthInterceptor implements HandlerInterceptor {
             throw new BizException(403, "无用户权限");
         }
 
-        LoginUserHolder.set(LoginUser.builder().userId(userId).role(role).build());
         return true;
     }
 
