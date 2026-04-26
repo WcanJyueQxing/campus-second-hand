@@ -1,170 +1,115 @@
-/* 全局容器 */
-.container {
-  width: 100%;
-  min-height: 100vh;
-  background-color: #f5f7fa;
-}
+/* 全局容器 */ 
+.container { 
+  width: 100%; 
+  min-height: 100vh; 
+  background-color: #f5f7fa; 
+} 
 
-/* 顶部标题栏 */
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 30rpx;
-  background-color: #fff;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
+/* 顶部标题栏 */ 
+.header { 
+  display: flex; 
+  align-items: center; 
+  padding: 30rpx; 
+  background-color: #fff; 
+  position: sticky; 
+  top: 0; 
+  z-index: 10; 
+} 
 
-.back-btn {
-  width: 60rpx;
-}
+.back-btn { 
+  margin-right: 20rpx; 
+} 
 
-.back-icon {
-  font-size: 36rpx;
-  color: #333;
-}
+.back-icon { 
+  font-size: 40rpx; 
+  font-weight: bold; 
+  color: #333; 
+  line-height: 36rpx; 
+} 
 
-.title {
-  font-size: 36rpx;
-  font-weight: 600;
-  color: #333;
-}
+.title { 
+  font-size: 36rpx; 
+  font-weight: 600; 
+  color: #333; 
+} 
 
-.edit-btn {
-  color: #007aff;
-  font-size: 30rpx;
-}
+/* 列表容器 */ 
+.list-container { 
+  padding: 20rpx; 
+} 
 
-/* 列表容器 */
-.list-container {
-  padding: 20rpx;
-  padding-bottom: 120rpx;
-}
+/* 商品卡片 */ 
+.item-card { 
+  display: flex; 
+  align-items: center; 
+  background-color: #fff; 
+  border-radius: 16rpx; 
+  padding: 20rpx; 
+  margin-bottom: 20rpx; 
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05); 
+  transition: transform 0.2s; 
+} 
 
-/* 商品卡片 */
-.item-card {
-  display: flex;
-  align-items: center;
-  background-color: #fff;
-  border-radius: 16rpx;
-  padding: 20rpx;
-  margin-bottom: 20rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
-  position: relative;
-}
+.item-card:active { 
+  transform: scale(0.98); 
+} 
 
-.checkbox {
-  margin-right: 20rpx;
-}
+/* 商品图片 */ 
+.cover { 
+  width: 160rpx; 
+  height: 160rpx; 
+  border-radius: 12rpx; 
+  object-fit: cover; 
+} 
 
-.check-icon {
-  width: 40rpx;
-  height: 40rpx;
-  border: 2rpx solid #ddd;
-  border-radius: 50%;
-}
+/* 商品信息 */ 
+.info { 
+  flex: 1; 
+  margin-left: 24rpx; 
+  display: flex; 
+  flex-direction: column; 
+  justify-content: space-between; 
+  height: 160rpx; 
+} 
 
-.check-icon.checked {
-  background-color: #007aff;
-  border-color: #007aff;
-}
+.name { 
+  font-size: 30rpx; 
+  color: #333; 
+  display: -webkit-box; 
+  -webkit-line-clamp: 2; 
+  -webkit-box-orient: vertical; 
+  overflow: hidden; 
+  line-height: 1.4; 
+} 
 
-.cover {
-  width: 160rpx;
-  height: 160rpx;
-  border-radius: 12rpx;
-  object-fit: cover;
-}
+.price { 
+  font-size: 34rpx; 
+  font-weight: bold; 
+  color: #ff4d4f; 
+} 
 
-.info {
-  flex: 1;
-  margin-left: 24rpx;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 160rpx;
-}
+/* 空状态 */ 
+.empty-state { 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  justify-content: center; 
+  padding: 150rpx 40rpx; 
+  color: #999; 
+} 
 
-.name {
-  font-size: 30rpx;
-  color: #333;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  line-height: 1.4;
-}
+.empty-icon { 
+  font-size: 120rpx; 
+  margin-bottom: 30rpx; 
+} 
 
-.price {
-  font-size: 34rpx;
-  font-weight: bold;
-  color: #ff4d4f;
-}
+.empty-title { 
+  font-size: 32rpx; 
+  margin-bottom: 16rpx; 
+  color: #666; 
+} 
 
-.delete-btn {
-  background-color: #ff4d4f;
-  color: #fff;
-  padding: 10rpx 20rpx;
-  border-radius: 8rpx;
-  font-size: 26rpx;
-}
-
-/* 空状态 */
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 150rpx 40rpx;
-  color: #999;
-}
-
-.empty-icon {
-  font-size: 120rpx;
-  margin-bottom: 30rpx;
-}
-
-.empty-title {
-  font-size: 32rpx;
-  margin-bottom: 16rpx;
-  color: #666;
-}
-
-.empty-tip {
-  font-size: 26rpx;
-  color: #bbb;
-}
-
-/* 底部批量删除栏 */
-.bottom-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20rpx 30rpx;
-  background-color: #fff;
-  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.05);
-}
-
-.select-all {
-  display: flex;
-  align-items: center;
-}
-
-.select-all text {
-  margin-left: 10rpx;
-  font-size: 30rpx;
-}
-
-.delete-all-btn {
-  background-color: #ff4d4f;
-  color: #fff;
-  padding: 15rpx 30rpx;
-  border-radius: 8rpx;
-  font-size: 30rpx;
+.empty-tip { 
+  font-size: 26rpx; 
+  color: #bbb; 
 }

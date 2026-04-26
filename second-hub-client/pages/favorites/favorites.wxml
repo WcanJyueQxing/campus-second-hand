@@ -1,57 +1,33 @@
-<view class="container">
-  <!-- 顶部标题栏 -->
-  <view class="header">
-    <view class="back-btn" bindtap="goBack">
-      <text class="back-icon">←</text>
-    </view>
-    <text class="title">我的收藏</text>
-    <view class="edit-btn" bindtap="toggleEditMode">
-      <text>{{isEditMode ? '完成' : '编辑'}}</text>
-    </view>
-  </view>
+<view class="container"> 
+  <!-- 顶部标题 --> 
+  <view class="header"> 
+    <view class="back-btn" bindtap="goBack"> 
+      <text class="back-icon">←</text> 
+    </view> 
+    <text class="title">我的收藏</text> 
+  </view> 
 
-  <!-- 收藏列表 -->
-  <scroll-view scroll-y class="list-container" wx:if="{{list.length > 0}}">
-    <view 
-      wx:for="{{list}}" 
-      wx:key="id" 
-      class="item-card" 
-      bindtap="{{isEditMode ? 'toggleSelect' : 'goDetail'}}" 
-      data-id="{{item.id}}"
-    >
-      <!-- 编辑模式的选择框 -->
-      <view wx:if="{{isEditMode}}" class="checkbox">
-        <view class="check-icon {{item.selected ? 'checked' : ''}}"></view>
-      </view>
-      
-      <image class="cover" src="{{item.coverImage}}" mode="aspectFill" />
-      <view class="info">
-        <text class="name">{{item.title}}</text>
-        <text class="price">¥{{item.price}}</text>
-      </view>
+  <!-- 收藏列表 --> 
+  <scroll-view scroll-y class="list-container" wx:if="{{list.length > 0}}"> 
+    <view  
+      wx:for="{{list}}"  
+      wx:key="id"  
+      class="item-card"  
+      bindtap="goDetail"  
+      data-id="{{item.id}}" 
+    > 
+      <image class="cover" src="{{item.coverImage}}" mode="aspectFill" /> 
+      <view class="info"> 
+        <text class="name">{{item.title}}</text> 
+        <text class="price">¥{{item.price}}</text> 
+      </view> 
+    </view> 
+  </scroll-view> 
 
-      <!-- 单条删除按钮（仅编辑模式） -->
-      <view wx:if="{{isEditMode}}" class="delete-btn" bindtap="deleteSingle" data-id="{{item.id}}">
-        <text>删除</text>
-      </view>
-    </view>
-  </scroll-view>
-
-  <!-- 空状态 -->
-  <view class="empty-state" wx:else>
-    <view class="empty-icon">💖</view>
-    <text class="empty-title">你还没有收藏商品</text>
-    <text class="empty-tip">去首页逛逛，把喜欢的宝贝收藏起来吧</text>
-  </view>
-
-  <!-- 底部批量删除栏（仅编辑模式） -->
-  <view class="bottom-bar" wx:if="{{isEditMode && list.length > 0}}">
-    <view class="select-all" bindtap="toggleSelectAll">
-      <view class="check-icon {{isAllSelected ? 'checked' : ''}}"></view>
-      <text>全选</text>
-    </view>
-    <view class="delete-all-btn" bindtap="batchDelete">
-      <text>删除选中({{selectedCount}})</text>
-    </view>
-  </view>
+  <!-- 空状态 --> 
+  <view class="empty-state" wx:else> 
+    <view class="empty-icon">💖</view> 
+    <text class="empty-title">你还没有收藏商品</text> 
+    <text class="empty-tip">去首页逛逛，把喜欢的宝贝收藏起来吧</text> 
+  </view> 
 </view>

@@ -70,40 +70,4 @@ public class GoodsFavoriteServiceImpl implements GoodsFavoriteService {
         System.out.println("【收藏列表】查到数量：" + (list == null ? 0 : list.size()));
         return Result.success("获取成功", list);
     }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public Result deleteFavorite(Long userId, Long goodsId) {
-        // 查询收藏记录
-        GoodsFavorite favorite = goodsFavoriteMapper.selectByUserAndGoods(userId, goodsId);
-        if (favorite == null || favorite.getIsDeleted() == 1) {
-            return Result.error("该商品未收藏");
-        }
-
-        // 标记为删除
-        favorite.setIsDeleted(1);
-        favorite.setUpdatedAt(LocalDateTime.now());
-        goodsFavoriteMapper.updateById(favorite);
-
-        // 减少商品收藏数
-        goodsMapper.reduceFavoriteCount(goodsId);
-        return Result.success("取消收藏成功");
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public Result batchDeleteFavorites(Long userId, List<Long> goodsIds) {
-        int successCount = 0;
-        for (Long goodsId : goodsIds) {
-            GoodsFavorite favorite = goodsFavoriteMapper.selectByUserAndGoods(userId, goodsId);
-            if (favorite != null && favorite.getIsDeleted() == 0) {
-                favorite.setIsDeleted(1);
-                favorite.setUpdatedAt(LocalDateTime.now());
-                goodsFavoriteMapper.updateById(favorite);
-                goodsMapper.reduceFavoriteCount(goodsId);
-                successCount++;
-            }
-        }
-        return Result.success("批量取消收藏成功，共处理" + successCount + "件商品");
-    }
 }
