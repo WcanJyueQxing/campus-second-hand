@@ -1,147 +1,134 @@
-Page({
-  data: {
-    list: [],
-    isEditMode: false, // 是否处于编辑模式
-    isAllSelected: false, // 是否全选
-    selectedCount: 0 // 选中数量
-  },
+Page({ 
+  data: { 
+    list: [], 
+    isEditMode: false, 
+    isAllSelected: false, 
+    selectedCount: 0 
+  }, 
 
-  onLoad() {
-    this.loadFavorites()
-  },
+  onLoad() { 
+    this.loadFavorites() 
+  }, 
 
-  onShow() {
-    this.loadFavorites()
-  },
+  onShow() { 
+    this.loadFavorites() 
+  }, 
 
-  // 加载收藏列表
-  loadFavorites() {
-    const token = wx.getStorageSync('token')
-    wx.request({
-      url: 'http://localhost:8080/api/user/favorites',
-      method: 'GET',
-      header: { token },
-      success: (res) => {
-        if (res.data && (res.data.code === 0 || res.data.code === 200) && res.data.data) {
-          const list = res.data.data.map(item => ({
-            ...item,
-            selected: false // 新增选中状态
-          }))
-          this.setData({ list, isEditMode: false, isAllSelected: false, selectedCount: 0 })
-        }
-      }
-    })
-  },
+  // 加载收藏列表 
+  loadFavorites() { 
+    const token = wx.getStorageSync('token') 
+    wx.request({ 
+      url: 'http://localhost:8080/api/user/favorites', 
+      method: 'GET', 
+      header: { token }, 
+      success: (res) => { 
+        if (res.data?.code === 200 && res.data.data) { 
+          this.setData({ 
+            list: res.data.data.map(item => ({ ...item, selected: false })), 
+            isEditMode: false, 
+            isAllSelected: false, 
+            selectedCount: 0 
+          }) 
+        } 
+      } 
+    }) 
+  }, 
 
-  // 切换编辑模式
-  toggleEditMode() {
-    this.setData({
-      isEditMode: !this.data.isEditMode,
-      isAllSelected: false,
-      selectedCount: 0,
-      list: this.data.list.map(item => ({ ...item, selected: false }))
-    })
-  },
+  // 切换编辑模式 
+  toggleEditMode() { 
+    this.setData({ 
+      isEditMode: !this.data.isEditMode, 
+      isAllSelected: false, 
+      selectedCount: 0, 
+      list: this.data.list.map(i => ({ ...i, selected: false })) 
+    }) 
+  }, 
 
-  // 切换单条选中状态
-  toggleSelect(e) {
-    const id = e.currentTarget.dataset.id
-    const list = this.data.list.map(item => {
-      if (item.id === id) {
-        return { ...item, selected: !item.selected }
-      }
-      return item
-    })
-    const selectedCount = list.filter(item => item.selected).length
-    const isAllSelected = selectedCount === list.length && list.length > 0
-    this.setData({ list, selectedCount, isAllSelected })
-  },
+  // 选中单个 
+  toggleSelect(e) { 
+    const id = e.currentTarget.dataset.id 
+    const list = this.data.list.map(item => 
+      item.id === id ? { ...item, selected: !item.selected } : item 
+    ) 
+    const selectedCount = list.filter(i => i.selected).length 
+    const isAllSelected = selectedCount === list.length 
+    this.setData({ list, selectedCount, isAllSelected }) 
+  }, 
 
-  // 全选/取消全选
-  toggleSelectAll() {
-    const isAllSelected = !this.data.isAllSelected
-    const list = this.data.list.map(item => ({ ...item, selected: isAllSelected }))
-    const selectedCount = isAllSelected ? list.length : 0
-    this.setData({ list, isAllSelected, selectedCount })
-  },
+  // 全选 
+  toggleSelectAll() { 
+    const isAll = !this.data.isAllSelected 
+    this.setData({ 
+      isAllSelected: isAll, 
+      selectedCount: isAll ? this.data.list.length : 0, 
+      list: this.data.list.map(item => ({ ...item, selected: isAll })) 
+    }) 
+  }, 
 
-  // 单条删除
-  deleteSingle(e) {
-    const id = e.currentTarget.dataset.id
-    wx.showModal({
-      title: '提示',
-      content: '确定要取消收藏该商品吗？',
-      success: (res) => {
-        if (res.confirm) {
-          const token = wx.getStorageSync('token')
-          wx.request({
-            url: `http://localhost:8080/api/user/favorites/${id}`,
-            method: 'DELETE',
-            header: { token },
-            success: () => {
-              wx.showToast({ title: '取消收藏成功' })
-              this.loadFavorites()
-            }
-          })
-        }
-      }
-    })
-  },
+  // --------------------- 
+  // ✅ 【关键】真正可用的批量删除 
+  // --------------------- 
+  batchDelete() { 
+    const selected = this.data.list.filter(item => item.selected) 
+    if (selected.length === 0) { 
+      wx.showToast({ title: '请选择商品', icon: 'none' }) 
+      return 
+    } 
 
-  // 批量删除（修复版）
-  batchDelete() {
-    const selectedIds = this.data.list.filter(item => item.selected).map(item => item.id)
-    if (selectedIds.length === 0) {
-      wx.showToast({ title: '请选择要删除的商品', icon: 'none' })
-      return
-    }
+    wx.showModal({ 
+      title: '确认删除', 
+      content: `确定删除 ${selected.length} 个收藏？`, 
+      success: (res) => { 
+        if (!res.confirm) return 
 
-    wx.showModal({
-      title: '提示',
-      content: `确定要取消收藏选中的${selectedIds.length}件商品吗？`,
-      success: (res) => {
-        if (res.confirm) {
-          const token = wx.getStorageSync('token')
-          wx.request({
-            url: 'http://localhost:8080/api/user/favorites/batch',
-            method: 'DELETE',
-            header: {
-              token: token,
-              'Content-Type': 'application/json'
-            },
-            data: selectedIds,
-            success: (res) => {
-              if (res.data && res.data.code === 200) {
-                wx.showToast({ title: '批量取消收藏成功' })
-                this.setData({
-                  isEditMode: false,
-                  isAllSelected: false,
-                  selectedCount: 0
-                })
-                this.loadFavorites()
-              } else {
-                wx.showToast({ title: res.data.message || '删除失败', icon: 'none' })
-              }
-            },
-            fail: () => {
-              wx.showToast({ title: '网络请求失败', icon: 'none' })
-            }
-          })
-        }
-      }
-    })
-  },
+        let success = 0 
+        selected.forEach(item => { 
+          this._deleteOne(item.id, () => { 
+            success++ 
+            if (success === selected.length) { 
+              wx.showToast({ title: '批量删除成功' }) 
+              this.loadFavorites() 
+            } 
+          }) 
+        }) 
+      } 
+    }) 
+  }, 
 
-  // 返回上一页
-  goBack() {
-    wx.navigateBack()
-  },
+  // 单条删除（内部用） 
+  _deleteOne(goodsId, callback) { 
+    const token = wx.getStorageSync('token') 
+    wx.request({ 
+      url: `http://localhost:8080/api/user/favorites/${goodsId}`, 
+      method: 'DELETE', 
+      header: { token }, 
+      success: callback 
+    }) 
+  }, 
 
-  // 跳转到商品详情
-  goDetail(e) {
-    const goodsId = e.currentTarget.dataset.id
-    wx.navigateTo({
-      url: `/pages/goods-detail/goods-detail?id=${goodsId}`
-    })
-  }
-})
+  // 单个删除按钮 
+  deleteSingle(e) { 
+    const id = e.currentTarget.dataset.id 
+    wx.showModal({ 
+      title: '确认删除', 
+      success: (res) => { 
+        if (res.confirm) { 
+          this._deleteOne(id, () => { 
+            wx.showToast({ title: '删除成功' }) 
+            this.loadFavorites() 
+          }) 
+        } 
+      } 
+    }) 
+  }, 
+
+  goBack() { 
+    wx.navigateBack() 
+  }, 
+
+  goDetail(e) { 
+    wx.navigateTo({ 
+      url: '/pages/goods-detail/goods-detail?id=' + e.currentTarget.dataset.id 
+    }) 
+  } 
+ })
