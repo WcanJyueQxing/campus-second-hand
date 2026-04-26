@@ -3,6 +3,10 @@
     "pages/home/home",
     "pages/goods-publish/goods-publish",
     "pages/orders/orders",
+    "pages/my-sold/my-sold",
+    "pages/my-bought/my-bought",
+    "pages/my-reviews/my-reviews",
+    "pages/comment/comment",
     "pages/mine/mine",
     "pages/login/login",
     "pages/goods-detail/goods-detail",
@@ -20,7 +24,8 @@
     "pages/feedback/feedback",
     "pages/account-security/account-security",
     "pages/change-password/change-password",
-    "pages/change-phone/change-phone"
+    "pages/change-phone/change-phone",
+    "images/page"
   ],
   "window": {
     "navigationBarTextStyle": "black",
@@ -56,5 +61,7 @@
   },
   "style": "v2",
   "sitemapLocation": "sitemap.json",
-  "requiredPrivateInfos": ["chooseAddress"]
+  "requiredPrivateInfos": [
+    "chooseAddress"
+  ]
 }

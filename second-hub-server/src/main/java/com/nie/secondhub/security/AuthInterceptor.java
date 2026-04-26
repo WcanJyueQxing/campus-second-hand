@@ -36,7 +36,7 @@ public class AuthInterceptor implements HandlerInterceptor {
                 || path.matches("/api/user/categories")
                 || path.matches("/api/user/comments/\\d+$")
                 || path.equals("/api/user/goods/my")
-                || path.equals("/api/user/favorites");
+                || path.startsWith("/api/user/favorites");
 
         // 检查是否携带token，如果携带则解析并设置用户信息
         String token = request.getHeader("Authorization");
@@ -71,10 +71,10 @@ public class AuthInterceptor implements HandlerInterceptor {
         if (path.startsWith("/api/admin/") && !"ADMIN".equals(role)) {
             throw new BizException(403, "无管理员权限");
         }
-        if (path.startsWith("/api/user/") && !"USER".equals(role) && 
-            !path.startsWith("/api/user/auth/") && 
-            !path.startsWith("/api/user/public/") && 
-            !path.startsWith("/api/user/captcha/") && 
+        if (path.startsWith("/api/user/") && !"USER".equals(role) &&
+            !path.startsWith("/api/user/auth/") &&
+            !path.startsWith("/api/user/public/") &&
+            !path.startsWith("/api/user/captcha/") &&
             !path.startsWith("/api/user/random-name/")) {
             throw new BizException(403, "无用户权限");
         }

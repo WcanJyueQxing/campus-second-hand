@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nie.secondhub.mapper.GoodsFavoriteMapper">
+
+    <select id="selectByUserAndGoods" resultType="com.nie.secondhub.entity.GoodsFavorite">
+        SELECT * FROM goods_favorite
+        WHERE user_id = #{userId} AND goods_id = #{goodsId}
+    </select>
+
+    <select id="selectByUserAndGoodsAll" resultType="com.nie.secondhub.entity.GoodsFavorite">
+        SELECT * FROM goods_favorite
+        WHERE user_id = #{userId} AND goods_id = #{goodsId}
+    </select>
+
+    <select id="selectFavoriteGoods" resultType="com.nie.secondhub.entity.Goods">
+        SELECT g.* FROM goods_favorite f
+        JOIN goods g ON f.goods_id = g.id
+        WHERE f.user_id = #{userId} AND f.is_deleted = 0 AND g.is_deleted = 0
+    </select>
+
+    <update id="updateFavoriteStatus">
+        UPDATE goods_favorite
+        SET is_deleted = #{isDeleted},
+            updated_at = #{updatedAt}
+        WHERE id = #{id}
+    </update>
+
+</mapper>

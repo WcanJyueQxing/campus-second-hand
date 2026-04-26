@@ -18,25 +18,25 @@
   <view class="trade-card" wx:if="{{isLoggedIn}}">
     <view class="trade-title">我的交易</view>
     <view class="trade-items">
-      <view class="trade-item" bindtap="toMyGoods">
+      <view class="trade-item" bindtap="toPublish">
         <view class="trade-icon icon-publish">
           <text class="icon-text">📦</text>
         </view>
-        <text class="trade-label">我发布的</text>
+        <text class="trade-label">发布</text>
         <text class="trade-count">{{publishCount || 0}}</text>
       </view>
       <view class="trade-item" bindtap="toSoldOrders">
         <view class="trade-icon icon-sold">
           <text class="icon-text">💰</text>
         </view>
-        <text class="trade-label">我卖出的</text>
+        <text class="trade-label">卖出</text>
         <text class="trade-count">{{soldCount || 0}}</text>
       </view>
       <view class="trade-item" bindtap="toBoughtOrders">
         <view class="trade-icon icon-bought">
           <text class="icon-text">🛒</text>
         </view>
-        <text class="trade-label">我买到的</text>
+        <text class="trade-label">买到</text>
         <text class="trade-count">{{boughtCount || 0}}</text>
       </view>
       <view class="trade-item" bindtap="toPendingReviews">

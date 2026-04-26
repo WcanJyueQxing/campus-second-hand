@@ -25,8 +25,10 @@ import com.nie.secondhub.util.PageUtil;
 import com.nie.secondhub.vo.GoodsDetailVO;
 import com.nie.secondhub.vo.GoodsVO;
 import jakarta.annotation.Resource;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.concurrent.TimeUnit;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -50,6 +52,8 @@ public class GoodsServiceImpl implements GoodsService {
     private GoodsAuditMapper goodsAuditMapper;
     @Resource
     private UserMapper userMapper;
+    @Resource
+    private RedisTemplate<String, Object> redisTemplate;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -134,8 +138,33 @@ public class GoodsServiceImpl implements GoodsService {
         goodsMapper.updateById(goods);
     }
 
+    private String getGoodsDetailCacheKey(Long goodsId) {
+        return "goods:detail:" + goodsId;
+    }
+
     @Override
     public GoodsDetailVO goodsDetail(Long goodsId, Long currentUserId) {
+        // 检查缓存
+        String cacheKey = getGoodsDetailCacheKey(goodsId);
+        try {
+            GoodsDetailVO cachedDetail = (GoodsDetailVO) redisTemplate.opsForValue().get(cacheKey);
+            if (cachedDetail != null) {
+                // 更新收藏状态
+                if (currentUserId != null) {
+                    Long count = goodsFavoriteMapper.selectCount(new LambdaQueryWrapper<GoodsFavorite>()
+                            .eq(GoodsFavorite::getUserId, currentUserId)
+                            .eq(GoodsFavorite::getGoodsId, goodsId)
+                            .eq(GoodsFavorite::getIsDeleted, 0));
+                    cachedDetail.setFavorite(count > 0);
+                } else {
+                    cachedDetail.setFavorite(false);
+                }
+                return cachedDetail;
+            }
+        } catch (Exception e) {
+            // 缓存读取失败，继续执行数据库查询
+        }
+
         Goods goods = getById(goodsId);
         if (!GoodsStatus.APPROVED.name().equals(goods.getStatus())
                 && !goods.getUserId().equals(currentUserId)) {
@@ -162,11 +191,20 @@ public class GoodsServiceImpl implements GoodsService {
         if (currentUserId != null) {
             Long count = goodsFavoriteMapper.selectCount(new LambdaQueryWrapper<GoodsFavorite>()
                     .eq(GoodsFavorite::getUserId, currentUserId)
-                    .eq(GoodsFavorite::getGoodsId, goodsId));
+                    .eq(GoodsFavorite::getGoodsId, goodsId)
+                    .eq(GoodsFavorite::getIsDeleted, 0));
             detailVO.setFavorite(count > 0);
         } else {
             detailVO.setFavorite(false);
         }
+
+        // 更新缓存
+        try {
+            redisTemplate.opsForValue().set(cacheKey, detailVO, 1, TimeUnit.HOURS);
+        } catch (Exception e) {
+            // 缓存写入失败，不影响正常返回
+        }
+
         return detailVO;
     }
 

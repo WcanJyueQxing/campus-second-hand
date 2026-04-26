@@ -7,7 +7,6 @@ import com.nie.secondhub.dto.user.CommentCreateRequest;
 import com.nie.secondhub.dto.user.ReportCreateRequest;
 import com.nie.secondhub.service.InteractionService;
 import com.nie.secondhub.vo.CommentVO;
-import com.nie.secondhub.vo.GoodsVO;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -21,28 +20,6 @@ public class UserInteractionController {
 
     @Resource
     private InteractionService interactionService;
-
-    @PostMapping("/favorites/{goodsId}")
-    public ApiResponse<Void> favorite(@PathVariable Long goodsId) {
-        interactionService.favorite(LoginUserHolder.requireUserId(), goodsId);
-        return ApiResponse.success(null);
-    }
-
-    @DeleteMapping("/favorites/{goodsId}")
-    public ApiResponse<Void> unfavorite(@PathVariable Long goodsId) {
-        interactionService.unfavorite(LoginUserHolder.requireUserId(), goodsId);
-        return ApiResponse.success(null);
-    }
-
-    @GetMapping("/favorites")
-    public ApiResponse<PageResponse<GoodsVO>> myFavorites(@RequestParam(defaultValue = "1") @Min(1) Long pageNo,
-                                                          @RequestParam(defaultValue = "10") @Min(1) Long pageSize) {
-        Long userId = LoginUserHolder.get() != null ? LoginUserHolder.get().getUserId() : null;
-        if (userId == null) {
-            return ApiResponse.success(PageResponse.<GoodsVO>builder().total(0L).pageNo(pageNo).pageSize(pageSize).records(java.util.Collections.emptyList()).build());
-        }
-        return ApiResponse.success(interactionService.myFavorites(userId, pageNo, pageSize));
-    }
 
     @PostMapping("/comments")
     public ApiResponse<Void> addComment(@Valid @RequestBody CommentCreateRequest request) {

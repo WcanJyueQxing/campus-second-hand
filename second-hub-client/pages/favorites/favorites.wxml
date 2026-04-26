@@ -1,22 +1,18 @@
-<view class="container favorites-page">
-  <view wx:if="{{list.length > 0}}">
-    <block wx:for="{{list}}" wx:key="id">
-      <view class="panel goods-card" data-id="{{item.id}}" bindtap="toDetail">
-        <image class="goods-cover" src="{{item.coverImage}}" mode="aspectFill" />
-        <view class="goods-main">
-          <view class="goods-title">{{item.title}}</view>
-          <view class="goods-desc">{{item.description || '收藏的商品暂无描述'}}</view>
-          <view class="goods-footer">
-            <text class="price-text">￥{{item.price}}</text>
-            <text class="tag tag--info">已收藏</text>
-          </view>
-        </view>
+<view class="container">
+  <!-- 列表 -->
+  <view wx:if="{{list.length > 0}}" class="list">
+    <view wx:for="{{list}}" wx:key="id" class="item" bindtap="goDetail" data-id="{{item.id}}">
+      <image class="cover" src="{{item.coverImage}}" mode="aspectFill" />
+      <view class="info">
+        <text class="title">{{item.title}}</text>
+        <text class="price">¥{{item.price}}</text>
       </view>
-    </block>
+    </view>
   </view>
 
-  <view class="panel empty-state" wx:else>
-    <view class="empty-state-title">你还没有收藏商品</view>
-    <view class="empty-state-desc">去首页逛逛，把喜欢的宝贝收藏起来吧</view>
+  <!-- 空状态 -->
+  <view wx:else class="empty">
+    <text>你还没有收藏商品</text>
+    <text>去首页逛逛，把喜欢的宝贝收藏起来吧</text>
   </view>
 </view>

@@ -13,8 +13,9 @@
 
     <view class="action-row">
       <button wx:if="{{isOwner}}" class="ghost-btn action-btn" bindtap="toEdit">编辑商品</button>
-      <button wx:if="{{!isOwner}}" class="ghost-btn action-btn" bindtap="toggleFavorite">
-        {{detail.favorite ? '已收藏' : '收藏商品'}}
+      <button wx:if="{{!isOwner}}" class="ghost-btn action-btn" bindtap="toggleFavorite" disabled="{{favoriting}}">
+        <text wx:if="{{!favoriting}}">{{detail.favorite ? '已收藏' : '收藏商品'}}</text>
+        <text wx:else>处理中...</text>
       </button>
       <button wx:if="{{!isOwner}}" class="primary-btn action-btn" bindtap="createOrder">立即下单</button>
     </view>

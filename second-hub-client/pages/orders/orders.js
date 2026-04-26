@@ -3,11 +3,34 @@ const { request } = require('../../utils/request')
 Page({
   data: {
     asRole: 'buyer',
-    list: []
+    list: [],
+    pageNo: 1,
+    pageSize: 20,
+    hasMore: true,
+    loading: false
   },
 
   onLoad(options) {
-    if (options.type) {
+    // 优先从globalData读取类型参数（来自switchTab跳转）
+    const app = getApp()
+    const globalData = app.globalData || {}
+    
+    if (globalData.orderTabType) {
+      if (globalData.orderTabType === 'sold') {
+        this.setData({ asRole: 'seller' })
+      } else if (globalData.orderTabType === 'bought') {
+        this.setData({ asRole: 'buyer' })
+      } else if (globalData.orderTabType === 'pending_review') {
+        this.setData({ asRole: 'buyer' })
+        this.loadPendingReviews()
+        // 清除globalData中的类型，避免影响下次跳转
+        app.globalData.orderTabType = null
+        return
+      }
+      // 清除globalData中的类型，避免影响下次跳转
+      app.globalData.orderTabType = null
+    } else if (options.type) {
+      // 备用：从URL参数读取（来自navigateTo跳转，非Tab页面）
       if (options.type === 'sold') {
         this.setData({ asRole: 'seller' })
       } else if (options.type === 'bought') {
@@ -21,11 +44,15 @@ Page({
   },
 
   onShow() {
-    const tabBar = this.getTabBar && this.getTabBar()
-    if (tabBar) {
-      tabBar.setData({ selected: 2 })
-    }
+    this.setData({ pageNo: 1, hasMore: true, list: [] })
     this.loadOrders()
+  },
+
+  onPullDownRefresh() {
+    this.setData({ pageNo: 1, hasMore: true, list: [] })
+    this.loadOrders(() => {
+      wx.stopPullDownRefresh()
+    })
   },
 
   switchRole(e) {
@@ -33,28 +60,58 @@ Page({
     if (role === this.data.asRole) {
       return
     }
-    this.setData({ asRole: role })
+    this.setData({ 
+      asRole: role, 
+      pageNo: 1, 
+      hasMore: true, 
+      list: [] 
+    })
     this.loadOrders()
   },
 
-  loadOrders() {
+  loadOrders(callback) {
+    if (this.data.loading || !this.data.hasMore) {
+      callback && callback()
+      return
+    }
+
+    this.setData({ loading: true })
+
     request({
       url: '/api/user/orders/my',
-      data: { asRole: this.data.asRole, pageNo: 1, pageSize: 20 }
+      data: { 
+        asRole: this.data.asRole, 
+        pageNo: this.data.pageNo, 
+        pageSize: this.data.pageSize 
+      }
     }).then((data) => {
       const records = data.records || []
-      const list = records.map((item) => ({
+      const processedList = records.map((item) => ({
         ...item,
         _orderStatusText: this.getOrderStatusText(item.orderStatus),
         _orderStatusClass: this.getOrderStatusClass(item.orderStatus),
         _payStatusText: this.getPayStatusText(item.payStatus),
-        _payStatusClass: this.getPayStatusClass(item.payStatus)
+        _payStatusClass: this.getPayStatusClass(item.payStatus),
+        createdAt: this.formatDate(item.createdAt)
       }))
-      this.setData({ list })
+
+      const newList = this.data.pageNo === 1 ? processedList : [...this.data.list, ...processedList]
+      this.setData({
+        list: newList,
+        hasMore: processedList.length >= this.data.pageSize,
+        pageNo: this.data.pageNo + 1
+      })
+    }).finally(() => {
+      this.setData({ loading: false })
+      callback && callback()
     })
   },
 
   loadPendingReviews() {
+    if (this.data.loading) return
+
+    this.setData({ loading: true })
+
     request({
       url: '/api/user/orders/my',
       data: { asRole: 'buyer', pageNo: 1, pageSize: 20 }
@@ -67,10 +124,36 @@ Page({
           _orderStatusText: this.getOrderStatusText(item.orderStatus),
           _orderStatusClass: this.getOrderStatusClass(item.orderStatus),
           _payStatusText: this.getPayStatusText(item.payStatus),
-          _payStatusClass: this.getPayStatusClass(item.payStatus)
+          _payStatusClass: this.getPayStatusClass(item.payStatus),
+          createdAt: this.formatDate(item.createdAt)
         }))
       this.setData({ list })
+    }).finally(() => {
+      this.setData({ loading: false })
     })
+  },
+
+  loadMore() {
+    if (!this.data.hasMore || this.data.loading) return
+    this.loadOrders()
+  },
+
+  toOrderDetail(e) {
+    const orderId = e.currentTarget.dataset.id
+    wx.navigateTo({ 
+      url: `/pages/order-detail/order-detail?id=${orderId}` 
+    })
+  },
+
+  formatDate(dateString) {
+    if (!dateString) return ''
+    const date = new Date(dateString)
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    const hours = String(date.getHours()).padStart(2, '0')
+    const minutes = String(date.getMinutes()).padStart(2, '0')
+    return `${year}-${month}-${day} ${hours}:${minutes}`
   },
 
   getOrderStatusText(status) {
@@ -120,6 +203,8 @@ Page({
   },
 
   doAction(e) {
+    // 移除stopPropagation，微信小程序中可能不需要或有兼容性问题
+    
     const { id, action } = e.currentTarget.dataset
     const apiMap = {
       pay: `/api/user/orders/${id}/pay`,
@@ -127,9 +212,14 @@ Page({
       sellerConfirm: `/api/user/orders/${id}/seller-confirm`,
       cancel: `/api/user/orders/${id}/cancel`
     }
+    
+    wx.showLoading({ title: '处理中...' })
     request({ url: apiMap[action], method: 'POST' }).then(() => {
       wx.showToast({ title: '操作成功', icon: 'none' })
+      this.setData({ pageNo: 1, hasMore: true, list: [] })
       this.loadOrders()
+    }).finally(() => {
+      wx.hideLoading()
     })
   }
 })

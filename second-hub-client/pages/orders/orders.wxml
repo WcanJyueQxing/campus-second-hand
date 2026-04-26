@@ -1,6 +1,14 @@
 <view class="container orders-page">
+  <!-- 顶部导航栏 -->
+  <view class="nav-bar">
+    <view class="nav-left" bindtap="navigateBack">
+      <text class="nav-back">←</text>
+    </view>
+    <view class="nav-title">我的订单</view>
+    <view class="nav-right"></view>
+  </view>
+
   <view class="panel">
-    <view class="section-title">我的订单</view>
     <view class="segment">
       <view
         class="segment-item {{asRole === 'buyer' ? 'segment-item--active' : ''}}"
@@ -19,29 +27,68 @@
     </view>
   </view>
 
-  <view wx:if="{{list.length > 0}}">
+  <!-- 订单列表 -->
+  <view wx:if="{{list.length > 0}}" bindscrolltolower="loadMore">
     <block wx:for="{{list}}" wx:key="id">
-      <view class="panel order-card">
-        <view class="order-head">
-          <view class="order-no">订单号：{{item.orderNo}}</view>
-          <view class="order-tags">
+      <view class="panel order-card" bindtap="toOrderDetail" data-id="{{item.id}}">
+        <view class="order-header">
+          <view class="order-info">
+            <view wx:if="{{asRole === 'seller'}}">
+              <text class="buyer-label">买家：</text>
+              <text class="buyer-name">{{item.buyerName || '未知'}}</text>
+            </view>
+            <view wx:else>
+              <text class="seller-label">卖家：</text>
+              <text class="seller-name">{{item.sellerName || '未知'}}</text>
+            </view>
+          </view>
+          <view class="order-status">
             <text class="tag {{item._orderStatusClass}}">{{item._orderStatusText}}</text>
-            <text class="tag {{item._payStatusClass}}">{{item._payStatusText}}</text>
           </view>
         </view>
-        <view class="order-title">{{item.goodsTitle}}</view>
-        <view class="order-amount">金额：<text class="price-text">￥{{item.amount}}</text></view>
-
-        <view class="actions">
-          <button class="ghost-btn action-btn" size="mini" data-id="{{item.id}}" data-action="pay" bindtap="doAction">支付</button>
-          <button class="ghost-btn action-btn" size="mini" data-id="{{item.id}}" data-action="buyerConfirm" bindtap="doAction">买家确认</button>
-          <button class="ghost-btn action-btn" size="mini" data-id="{{item.id}}" data-action="sellerConfirm" bindtap="doAction">卖家确认</button>
-          <button class="danger-btn action-btn" size="mini" data-id="{{item.id}}" data-action="cancel" bindtap="doAction">取消</button>
+        
+        <view class="order-content">
+          <view class="goods-image">
+            <image src="{{item.goodsCover || '../../images/default-avatar.png'}}" mode="aspectFill"></image>
+          </view>
+          <view class="goods-info">
+            <view class="goods-title">{{item.goodsTitle}}</view>
+            <view class="order-details">
+              <view class="order-price">
+                <text class="price-label">价格：</text>
+                <text class="price-value">￥{{item.amount}}</text>
+              </view>
+              <view class="order-time">{{item.createdAt || ''}}</view>
+            </view>
+          </view>
+        </view>
+        
+        <view class="order-actions">
+          <block wx:if="{{item.orderStatus === 'PENDING_PAYMENT' && asRole === 'seller'}}">
+            <button class="ghost-btn action-btn" size="mini" data-id="{{item.id}}" data-action="cancel" bindtap="doAction">取消订单</button>
+          </block>
+          <block wx:elif="{{item.orderStatus === 'PAID' && asRole === 'seller'}}">
+            <button class="primary-btn action-btn" size="mini" data-id="{{item.id}}" data-action="sellerConfirm" bindtap="doAction">确认发货</button>
+          </block>
+          <block wx:elif="{{item.orderStatus === 'BUYER_CONFIRMED' && asRole === 'seller'}}">
+            <button class="primary-btn action-btn" size="mini" data-id="{{item.id}}" data-action="sellerConfirm" bindtap="doAction">确认完成</button>
+          </block>
+          <block wx:elif="{{item.orderStatus === 'PENDING_PAYMENT' && asRole === 'buyer'}}">
+            <button class="primary-btn action-btn" size="mini" data-id="{{item.id}}" data-action="pay" bindtap="doAction">立即支付</button>
+            <button class="ghost-btn action-btn" size="mini" data-id="{{item.id}}" data-action="cancel" bindtap="doAction">取消订单</button>
+          </block>
+          <block wx:elif="{{item.orderStatus === 'PAID' && asRole === 'buyer'}}">
+            <button class="primary-btn action-btn" size="mini" data-id="{{item.id}}" data-action="buyerConfirm" bindtap="doAction">确认收货</button>
+          </block>
+          <block wx:elif="{{item.orderStatus === 'SELLER_CONFIRMED' && asRole === 'buyer'}}">
+            <button class="primary-btn action-btn" size="mini" data-id="{{item.id}}" data-action="buyerConfirm" bindtap="doAction">确认完成</button>
+          </block>
         </view>
       </view>
     </block>
   </view>
 
+  <!-- 空状态 -->
   <view class="panel empty-state" wx:else>
     <view class="empty-state-title">还没有订单</view>
     <view class="empty-state-desc">成交后会在这里查看订单状态</view>

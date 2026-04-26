@@ -103,13 +103,28 @@ Page({
     }
     wx.navigateTo({ url: '/pages/my-goods/my-goods' })
   },
+  toPublish() {
+    if (!this.data.isLoggedIn) {
+      this.toLogin()
+      return
+    }
+    wx.navigateTo({ url: '/pages/my-goods/my-goods' })
+  },
+  // toPublish() {
+  //   if (!this.data.isLoggedIn) {
+  //     this.toLogin()
+  //     return
+  //   }
+  //   wx.navigateTo({ url: '/pages/goods-publish/goods-publish' })
+  // },
 
   toSoldOrders() {
     if (!this.data.isLoggedIn) {
       this.toLogin()
       return
     }
-    wx.navigateTo({ url: '/pages/orders/orders?type=sold' })
+    // 跳转到专门的"我卖出的"页面
+    wx.navigateTo({ url: '/pages/my-sold/my-sold' })
   },
 
   toBoughtOrders() {
@@ -117,7 +132,7 @@ Page({
       this.toLogin()
       return
     }
-    wx.navigateTo({ url: '/pages/orders/orders?type=bought' })
+    wx.navigateTo({ url: '/pages/my-bought/my-bought' })
   },
 
   toPendingReviews() {
@@ -125,7 +140,7 @@ Page({
       this.toLogin()
       return
     }
-    wx.navigateTo({ url: '/pages/orders/orders?type=pending_review' })
+    wx.navigateTo({ url: '/pages/my-reviews/my-reviews' })
   },
 
   toFavorites() {

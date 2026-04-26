@@ -1,43 +1,58 @@
-const { request } = require('../../utils/request')
-
 Page({
   data: {
-    list: []
+    list: [],
+    loading: false
+  },
+
+  onLoad() {
+    this.loadFavorites()
   },
 
   onShow() {
-    console.log('加载收藏列表...')
-    const userInfo = wx.getStorageSync('userInfo') || {}
+    this.loadFavorites()
+  },
+
+  loadFavorites() {
+    this.setData({ loading: true })
     const token = wx.getStorageSync('token')
-    console.log('当前用户:', userInfo)
-    
-    // 未登录用户：弹出提示框
-    if (!token || !userInfo.id) {
-      wx.showModal({
-        title: '提示',
-        content: '请先登录或注册',
-        cancelText: '取消',
-        confirmText: '去登录',
-        success: (res) => {
-          if (res.confirm) {
-            wx.navigateTo({ url: '/pages/login/login' })
-          }
+
+    wx.request({
+      url: 'http://localhost:8080/api/user/favorites',
+      method: 'GET',
+      header: { token: token },
+      success: (res) => {
+        console.log('【收藏列表】接口返回:', res.data)
+
+        // 修复：后端返回 code: 0
+        if (res.data && (res.data.code === 0 || res.data.code === 200) && res.data.data) {
+          const list = res.data.data
+          console.log('【收藏列表】数据长度:', list.length)
+          this.setData({
+            list: list,
+            loading: false
+          })
+        } else {
+          console.log('【收藏列表】无数据或响应异常')
+          this.setData({
+            list: [],
+            loading: false
+          })
         }
-      })
-      this.setData({ list: [] })
-      return
-    }
-    
-    // 已登录用户：加载收藏列表
-    request({ url: '/api/user/favorites', data: { pageNo: 1, pageSize: 50 } }).then((data) => {
-      console.log('收藏数据:', data)
-      this.setData({ list: data.records || [] })
-    }).catch((err) => {
-      console.error('加载收藏失败:', err)
+      },
+      fail: (err) => {
+        console.error('加载收藏失败', err)
+        this.setData({
+          list: [],
+          loading: false
+        })
+      }
     })
   },
 
-  toDetail(e) {
-    wx.navigateTo({ url: `/pages/goods-detail/goods-detail?id=${e.currentTarget.dataset.id}` })
+  goDetail(e) {
+    const goodsId = e.currentTarget.dataset.id
+    wx.navigateTo({
+      url: `/pages/goods-detail/goods-detail?id=${goodsId}`
+    })
   }
 })

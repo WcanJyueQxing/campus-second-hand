@@ -10,7 +10,8 @@ Page({
     detailStatusClass: 'tag--info',
     comments: [],
     commentText: '',
-    isOwner: false
+    isOwner: false,
+    favoriting: false
   },
 
   onLoad(options) {
@@ -30,16 +31,14 @@ Page({
         detailStatusClass: this.getStatusClass(detail.status),
         isOwner: currentUserId > 0 && Number(detail.userId || 0) === currentUserId
       })
-      
-      // 添加到历史浏览记录
+
       this.addToHistory(detail)
     })
   },
 
-  // 添加到历史浏览记录
   addToHistory(goods) {
     if (!goods || !goods.id) return
-    
+
     const historyData = {
       goodsId: goods.id,
       title: goods.title,
@@ -88,15 +87,37 @@ Page({
   },
 
   toggleFavorite() {
-    const req = this.data.detail.favorite
-      ? request({ url: `/api/user/favorites/${this.data.id}`, method: 'DELETE' })
-      : request({ url: `/api/user/favorites/${this.data.id}`, method: 'POST' })
-    req.then(() => {
-      wx.showToast({
-        title: this.data.detail.favorite ? '已取消收藏' : '收藏成功',
-        icon: 'none'
-      })
-      this.loadDetail()
+    const token = wx.getStorageSync('token')
+    if (!token) {
+      wx.showToast({ title: '请先登录', icon: 'none' })
+      return
+    }
+
+    if (this.data.favoriting) return
+    this.setData({ favoriting: true })
+
+    wx.request({
+      url: 'http://localhost:8080/api/user/favorites/' + this.data.id,
+      method: 'POST',
+      header: { token: token },
+      success: (res) => {
+        console.log('【收藏操作】响应：', res.data)
+        if (res.data && (res.data.code === 0 || res.data.code === 200)) {
+          wx.showToast({ title: res.data.message || '操作成功' })
+          setTimeout(() => {
+            this.loadDetail()
+          }, 500)
+        } else {
+          wx.showToast({ title: res.data.message || '操作失败', icon: 'none' })
+        }
+      },
+      fail: (err) => {
+        console.error('【收藏操作】失败：', err)
+        wx.showToast({ title: '网络异常', icon: 'none' })
+      },
+      complete: () => {
+        this.setData({ favoriting: false })
+      }
     })
   },
 

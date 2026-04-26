@@ -4,4 +4,12 @@
     <update id="updateFavoriteCount">
         UPDATE goods SET favorite_count = favorite_count + #{delta} WHERE id = #{goodsId}
     </update>
+    
+    <update id="addFavoriteCount">
+        UPDATE goods SET favorite_count = favorite_count + 1 WHERE id = #{goodsId}
+    </update>
+    
+    <update id="reduceFavoriteCount">
+        UPDATE goods SET favorite_count = favorite_count - 1 WHERE id = #{goodsId} AND favorite_count > 0
+    </update>
 </mapper>
