@@ -1,18 +1,33 @@
-<view class="container">
-  <!-- 列表 -->
-  <view wx:if="{{list.length > 0}}" class="list">
-    <view wx:for="{{list}}" wx:key="id" class="item" bindtap="goDetail" data-id="{{item.id}}">
-      <image class="cover" src="{{item.coverImage}}" mode="aspectFill" />
-      <view class="info">
-        <text class="title">{{item.title}}</text>
-        <text class="price">¥{{item.price}}</text>
-      </view>
-    </view>
-  </view>
+<view class="container"> 
+  <!-- 顶部标题 --> 
+  <view class="header"> 
+    <view class="back-btn" bindtap="goBack"> 
+      <text class="back-icon">←</text> 
+    </view> 
+    <text class="title">我的收藏</text> 
+  </view> 
 
-  <!-- 空状态 -->
-  <view wx:else class="empty">
-    <text>你还没有收藏商品</text>
-    <text>去首页逛逛，把喜欢的宝贝收藏起来吧</text>
-  </view>
+  <!-- 收藏列表 --> 
+  <scroll-view scroll-y class="list-container" wx:if="{{list.length > 0}}"> 
+    <view  
+      wx:for="{{list}}"  
+      wx:key="id"  
+      class="item-card"  
+      bindtap="goDetail"  
+      data-id="{{item.id}}" 
+    > 
+      <image class="cover" src="{{item.coverImage}}" mode="aspectFill" /> 
+      <view class="info"> 
+        <text class="name">{{item.title}}</text> 
+        <text class="price">¥{{item.price}}</text> 
+      </view> 
+    </view> 
+  </scroll-view> 
+
+  <!-- 空状态 --> 
+  <view class="empty-state" wx:else> 
+    <view class="empty-icon">💖</view> 
+    <text class="empty-title">你还没有收藏商品</text> 
+    <text class="empty-tip">去首页逛逛，把喜欢的宝贝收藏起来吧</text> 
+  </view> 
 </view>

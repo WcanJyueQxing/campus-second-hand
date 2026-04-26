@@ -54,5 +54,9 @@ Page({
     wx.navigateTo({
       url: `/pages/goods-detail/goods-detail?id=${goodsId}`
     })
+  },
+
+  goBack() {
+    wx.navigateBack()
   }
 })
