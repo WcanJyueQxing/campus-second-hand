@@ -93,6 +93,7 @@ public class GoodsFavoriteServiceImpl implements GoodsFavoriteService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Result batchDeleteFavorites(Long userId, List<Long> goodsIds) {
+        int successCount = 0;
         for (Long goodsId : goodsIds) {
             GoodsFavorite favorite = goodsFavoriteMapper.selectByUserAndGoods(userId, goodsId);
             if (favorite != null && favorite.getIsDeleted() == 0) {
@@ -100,8 +101,9 @@ public class GoodsFavoriteServiceImpl implements GoodsFavoriteService {
                 favorite.setUpdatedAt(LocalDateTime.now());
                 goodsFavoriteMapper.updateById(favorite);
                 goodsMapper.reduceFavoriteCount(goodsId);
+                successCount++;
             }
         }
-        return Result.success("批量取消收藏成功");
+        return Result.success("批量取消收藏成功，共处理" + successCount + "件商品");
     }
 }

@@ -39,11 +39,14 @@ public class GoodsFavoriteController {
         return goodsFavoriteService.deleteFavorite(userId, goodsId);
     }
 
-    // 批量删除收藏（新增）
+    // 批量删除收藏（修复版）
     @DeleteMapping("/batch")
     public Result batchDeleteFavorites(
             @RequestHeader(value = "token", required = false) String token,
             @RequestBody List<Long> goodsIds) {
+        if (goodsIds == null || goodsIds.isEmpty()) {
+            return Result.error("请选择要删除的商品");
+        }
         Long userId = 1L;
         return goodsFavoriteService.batchDeleteFavorites(userId, goodsIds);
     }

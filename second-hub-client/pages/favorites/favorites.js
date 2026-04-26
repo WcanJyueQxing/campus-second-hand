@@ -88,7 +88,7 @@ Page({
     })
   },
 
-  // 批量删除
+  // 批量删除（修复版）
   batchDelete() {
     const selectedIds = this.data.list.filter(item => item.selected).map(item => item.id)
     if (selectedIds.length === 0) {
@@ -105,11 +105,26 @@ Page({
           wx.request({
             url: 'http://localhost:8080/api/user/favorites/batch',
             method: 'DELETE',
-            header: { token, 'content-type': 'application/json' },
+            header: {
+              token: token,
+              'Content-Type': 'application/json'
+            },
             data: selectedIds,
-            success: () => {
-              wx.showToast({ title: '批量取消收藏成功' })
-              this.loadFavorites()
+            success: (res) => {
+              if (res.data && res.data.code === 200) {
+                wx.showToast({ title: '批量取消收藏成功' })
+                this.setData({
+                  isEditMode: false,
+                  isAllSelected: false,
+                  selectedCount: 0
+                })
+                this.loadFavorites()
+              } else {
+                wx.showToast({ title: res.data.message || '删除失败', icon: 'none' })
+              }
+            },
+            fail: () => {
+              wx.showToast({ title: '网络请求失败', icon: 'none' })
             }
           })
         }
