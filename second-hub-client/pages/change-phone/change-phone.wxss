@@ -1,0 +1,95 @@
+.change-phone-container {
+  min-height: 100vh;
+  background-color: #f4f7fc;
+  padding: 20rpx;
+}
+
+.form-card {
+  background-color: #ffffff;
+  border-radius: 16rpx;
+  padding: 0 30rpx;
+  margin-bottom: 30rpx;
+}
+
+.form-item {
+  display: flex;
+  align-items: center;
+  padding: 30rpx 0;
+}
+
+.form-label {
+  width: 140rpx;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.form-input {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.captcha-input {
+  width: 200rpx;
+}
+
+.captcha-image {
+  width: 160rpx;
+  height: 64rpx;
+  margin-left: 20rpx;
+  border-radius: 8rpx;
+}
+
+.form-divider {
+  height: 1rpx;
+  background-color: #f0f0f0;
+}
+
+.tips {
+  padding: 20rpx 30rpx;
+}
+
+.tip-text {
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* .submit-btn-container {
+  padding: 40rpx 30rpx;
+}
+
+.submit-btn {
+  width: 100%;
+  height: 88rpx;
+  line-height: 88rpx;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
+  font-size: 32rpx;
+  border-radius: 44rpx;
+  border: none;
+} */
+.submit-btn-container {
+  padding: 30rpx;
+}
+
+.submit-btn {
+  /* 文字居中核心代码 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* 还原你截图的样式 */
+  width: 100%;
+  height: 80rpx;
+  border: 2rpx solid #ff6b6b;
+  border-radius: 40rpx; /* 圆角按钮 */
+  background-color: #fff5f5;
+  color: #ff4d4f;
+  font-size: 30rpx;
+  line-height: 1; /* 清除默认行高影响 */
+}
+
+/* 去掉按钮默认样式 */
+.submit-btn::after {
+  border: none;
+}

@@ -1,5 +1,3 @@
-# 商品收藏功能完整版实现（SpringBoot \+ MySQL \+ Redis）
-
 # 商品收藏功能 **完整版实现（SpringBoot \+ MySQL \+ Redis）**
 
 我给你**一套可直接运行、无 Redis 报错、前后端完整、企业级标准**的代码，解决你所有问题：

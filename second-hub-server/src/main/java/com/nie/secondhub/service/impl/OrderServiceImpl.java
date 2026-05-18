@@ -272,8 +272,8 @@ public class OrderServiceImpl implements OrderService {
         vo.setSellerName(seller == null ? null : seller.getNickname());
         vo.setAmount(order.getAmount());
         vo.setNote(order.getNote());
-        vo.setOrderStatus(order.getOrderStatus());
-        vo.setPayStatus(order.getPayStatus());
+        vo.setOrderStatus(OrderStatus.getNameByCode(order.getOrderStatus()));
+        vo.setPayStatus(PayStatus.getNameByCode(order.getPayStatus()));
         vo.setBuyerConfirmed(order.getBuyerConfirmed());
         vo.setSellerConfirmed(order.getSellerConfirmed());
         vo.setPaidAt(order.getPaidAt());

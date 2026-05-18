@@ -1,0 +1,95 @@
+<view class="container order-detail-page">
+  <!-- 顶部导航栏 -->
+  <view class="nav-bar">
+    <view class="nav-left" bindtap="navigateBack">
+      <text class="nav-back">←</text>
+    </view>
+    <view class="nav-title">订单详情</view>
+    <view class="nav-right"></view>
+  </view>
+
+  <!-- 订单状态 -->
+  <view class="panel status-panel">
+    <view class="status-icon {{orderStatusClass}}">
+      {{statusIcon}}
+    </view>
+    <view class="status-info">
+      <view class="status-title">{{orderStatusText}}</view>
+      <view class="status-desc">{{statusDesc}}</view>
+    </view>
+  </view>
+
+  <!-- 订单信息 -->
+  <view class="panel order-info-panel">
+    <view class="panel-title">订单信息</view>
+    <view class="info-item">
+      <view class="info-label">订单编号</view>
+      <view class="info-value">{{orderDetail.orderNo}}</view>
+    </view>
+    <view class="info-item">
+      <view class="info-label">下单时间</view>
+      <view class="info-value">{{formattedCreateTime}}</view>
+    </view>
+    <view class="info-item">
+      <view class="info-label">支付状态</view>
+      <view class="info-value">{{payStatusText}}</view>
+    </view>
+  </view>
+
+  <!-- 商品信息 -->
+  <view class="panel goods-info-panel">
+    <view class="panel-title">商品信息</view>
+    <view class="goods-item">
+      <view class="goods-image">
+        <image src="{{orderDetail.goodsCover || '../../images/default-avatar.png'}}" mode="aspectFill"></image>
+      </view>
+      <view class="goods-info">
+        <view class="goods-title">{{orderDetail.goodsTitle}}</view>
+        <view class="goods-price">￥{{orderDetail.amount}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 买家信息 -->
+  <view class="panel user-info-panel">
+    <view class="panel-title">买家信息</view>
+    <view class="info-item">
+      <view class="info-label">买家姓名</view>
+      <view class="info-value">{{orderDetail.buyerName || '未知'}}</view>
+    </view>
+  </view>
+
+  <!-- 卖家信息 -->
+  <view class="panel user-info-panel">
+    <view class="panel-title">卖家信息</view>
+    <view class="info-item">
+      <view class="info-label">卖家姓名</view>
+      <view class="info-value">{{orderDetail.sellerName || '未知'}}</view>
+    </view>
+  </view>
+
+  <!-- 订单操作 -->
+  <view class="bottom-actions" wx:if="{{showActions}}">
+    <view class="action-buttons">
+      <block wx:if="{{orderDetail.orderStatus === 'PENDING_PAYMENT' && isBuyer}}">
+        <button class="ghost-btn action-btn" bindtap="cancelOrder">取消订单</button>
+        <button class="primary-btn action-btn" bindtap="payOrder">立即支付</button>
+      </block>
+      <block wx:elif="{{orderDetail.orderStatus === 'PENDING_PAYMENT' && isSeller}}">
+        <button class="danger-btn action-btn" bindtap="cancelOrder">取消订单</button>
+      </block>
+      <block wx:elif="{{orderDetail.orderStatus === 'PAID' && isBuyer}}">
+        <button class="primary-btn action-btn" bindtap="confirmReceipt">确认收货</button>
+      </block>
+      <block wx:elif="{{orderDetail.orderStatus === 'PAID' && isSeller}}">
+        <button class="primary-btn action-btn" bindtap="confirmShipment">确认发货</button>
+      </block>
+      <block wx:elif="{{orderDetail.orderStatus === 'SELLER_CONFIRMED' && isBuyer}}">
+        <button class="primary-btn action-btn" bindtap="confirmCompletion">确认完成</button>
+      </block>
+      <block wx:elif="{{orderDetail.orderStatus === 'BUYER_CONFIRMED' && isSeller}}">
+        <button class="primary-btn action-btn" bindtap="confirmCompletion">确认完成</button>
+      </block>
+    </view>
+  </view>
+</view>

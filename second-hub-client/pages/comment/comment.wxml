@@ -1,0 +1,68 @@
+<view class="container comment-page">
+  <!-- 顶部导航栏 -->
+  <view class="nav-bar">
+    <view class="nav-left" bindtap="navigateBack">
+      <text class="nav-back">←</text>
+    </view>
+    <view class="nav-title">评价商品</view>
+    <view class="nav-right"></view>
+  </view>
+
+  <!-- 商品信息 -->
+  <view class="goods-info">
+    <view class="goods-image">
+      <image wx:if="{{order.goodsCover}}" src="{{order.goodsCover}}" mode="aspectFill"></image>
+      <view wx:else class="default-image">
+        <text class="default-icon">📦</text>
+      </view>
+    </view>
+    <view class="goods-details">
+      <view class="goods-title">{{order.goodsTitle || '商品详情'}}</view>
+      <view class="goods-price">￥{{order.amount || '0.00'}}</view>
+    </view>
+  </view>
+
+  <!-- 评分 -->
+  <view class="score-card">
+    <view class="card-header">
+      <text class="title">商品评分</text>
+      <text class="desc">{{scoreText}}</text>
+    </view>
+    <view class="star-group">
+      <view
+        wx:for="{{stars}}"
+        wx:key="index"
+        class="star {{item ? 'active' : ''}}"
+        bindtap="selectStar"
+        data-index="{{index}}"
+      >
+        ★
+      </view>
+    </view>
+  </view>
+
+  <!-- 评价内容 -->
+  <view class="content-section">
+    <text class="section-title">评价内容</text>
+    <textarea 
+      class="content-input" 
+      placeholder="请输入您的评价..." 
+      placeholder-class="placeholder" 
+      value="{{content}}" 
+      bindinput="bindContent"
+      maxlength="500"
+    ></textarea>
+    <text class="char-count">{{content.length}}/500</text>
+  </view>
+
+  <!-- 提交按钮 -->
+  <view class="submit-section">
+    <button 
+      class="submit-btn" 
+      bindtap="submitComment"
+      disabled="{{!hasScore || !content.trim()}}"
+    >
+      提交评价
+    </button>
+  </view>
+</view>

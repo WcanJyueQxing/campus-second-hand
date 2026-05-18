@@ -1,0 +1,43 @@
+<view class="about-container">
+  <view class="about-header">
+    <text class="app-icon">🏠</text>
+    <text class="app-name">Second Hub</text>
+    <text class="app-version">版本 1.0.0</text>
+  </view>
+
+  <view class="about-card">
+    <view class="card-title">关于我们</view>
+    <view class="about-content">
+      <text class="about-text">Second Hub 是一个专注于校园二手交易的平台，致力于为在校学生提供便捷、安全的二手物品交易服务。</text>
+      <text class="about-text">我们相信，每一件闲置物品都能在校园里找到新的主人，让资源得到更好的循环利用。</text>
+    </view>
+  </view>
+
+  <view class="about-card">
+    <view class="card-title">联系方式</view>
+    <view class="contact-item">
+      <text class="contact-label">客服邮箱</text>
+      <text class="contact-value">support@secondhub.com</text>
+    </view>
+    <view class="contact-item">
+      <text class="contact-label">官方网站</text>
+      <text class="contact-value">www.secondhub.com</text>
+    </view>
+    <view class="contact-item no-border">
+      <text class="contact-label">微信公众号</text>
+      <text class="contact-value">Second Hub</text>
+    </view>
+  </view>
+
+  <view class="about-card">
+    <view class="card-title">特别鸣谢</view>
+    <view class="about-content">
+      <text class="about-text">感谢微信小程序团队提供的开发支持。</text>
+      <text class="about-text">感谢所有支持和使用 Second Hub 的用户们。</text>
+    </view>
+  </view>
+
+  <view class="copyright">
+    <text>© 2024 Second Hub. All rights reserved.</text>
+  </view>
+</view>

@@ -1,0 +1,87 @@
+<view class="profile-edit-container">
+  <!-- 编辑列表项 -->
+  <view class="edit-card">
+    <!-- 头像 -->
+    <view class="edit-item avatar-item" bindtap="chooseAvatar">
+      <text class="edit-label">头像</text>
+      <view class="avatar-wrapper">
+        <image class="avatar-img" src="{{avatarUrl || 'https://img.yzcdn.cn/vant/cat.jpeg'}}" mode="aspectFill"></image>
+        <view class="arrow"></view>
+      </view>
+    </view>
+    <view class="divider"></view>
+
+    <!-- 昵称 -->
+    <view class="edit-item" bindtap="editNickname">
+      <text class="edit-label">昵称</text>
+      <view class="value-wrapper">
+        <text class="edit-value {{nickname ? '' : 'placeholder'}}">{{nickname || '去填写'}}</text>
+        <view class="arrow"></view>
+      </view>
+    </view>
+    <view class="divider"></view>
+
+    <!-- 简介 -->
+    <view class="edit-item" bindtap="editBio">
+      <text class="edit-label">简介</text>
+      <view class="value-wrapper">
+        <text class="edit-value {{bio ? '' : 'placeholder'}}">{{bio || '去填写'}}</text>
+        <view class="arrow"></view>
+      </view>
+    </view>
+    <view class="divider"></view>
+
+    <!-- 性别 -->
+    <view class="edit-item" bindtap="chooseGender">
+      <text class="edit-label">性别</text>
+      <view class="value-wrapper">
+        <text class="edit-value {{genderText ? '' : 'placeholder'}}">{{genderText || '去选择'}}</text>
+        <view class="arrow"></view>
+      </view>
+    </view>
+    <view class="divider"></view>
+
+    <!-- 生日条目 -->
+    <view class="edit-item" bindtap="showDatePicker">
+      <text class="edit-label">生日</text>
+      <view class="value-wrapper">
+        <text class="edit-value {{birthday ? '' : 'placeholder'}}">{{birthday || '请选择生日'}}</text>
+        <view class="arrow"></view>
+      </view>
+    </view>
+    <view class="divider"></view>
+
+    <!-- 院校名称 -->
+    <view class="edit-item" bindtap="chooseSchool">
+      <text class="edit-label">院校名称</text>
+      <view class="value-wrapper">
+        <text class="edit-value {{school ? '' : 'placeholder'}}">{{school || '去选择'}}</text>
+        <view class="arrow"></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 日期选择器弹窗 -->
+  <view class="picker-mask" wx:if="{{showDatePicker}}" bindtap="hideDatePicker"></view>
+  <picker-view 
+    wx:if="{{showDatePicker}}" 
+    class="date-picker" 
+    value="{{pickerIndex}}" 
+    bindchange="onDateChange" 
+  >
+    <picker-view-column>
+      <view wx:for="{{years}}" wx:key="item">{{item}}年</view>
+    </picker-view-column>
+    <picker-view-column>
+      <view wx:for="{{months}}" wx:key="item">{{item}}月</view>
+    </picker-view-column>
+    <picker-view-column>
+      <view wx:for="{{days}}" wx:key="item">{{item}}日</view>
+    </picker-view-column>
+  </picker-view>
+
+  <!-- 保存按钮 -->
+  <view class="save-btn-wrapper">
+    <button class="save-btn" bindtap="saveProfile">保存修改</button>
+  </view>
+</view>

@@ -53,6 +53,20 @@
     </view>
 
     <view class="form-item">
+      <text class="label-text">出售数量</text>
+      <input
+        class="input-control"
+        placeholder="请输入数量"
+        type="digit"
+        data-field="commentCount"
+        bindinput="onInput"
+        bindblur="onQuantityBlur"
+        value="{{form.commentCount}}"
+      />
+      <text wx:if="{{quantityError}}" class="error-text">{{quantityError}}</text>
+    </view>
+
+    <view class="form-item">
       <text class="label-text">商品图片</text>
       <button class="ghost-btn upload-btn" bindtap="chooseImage">选择图片并上传</button>
       <view class="upload-tip">首张会作为封面，最多上传 {{maxImages}} 张，单个文件不超过 {{maxFileSizeText}}</view>

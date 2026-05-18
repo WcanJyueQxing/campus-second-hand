@@ -7,6 +7,7 @@ import com.nie.secondhub.mapper.GoodsMapper;
 import com.nie.secondhub.service.GoodsFavoriteService;
 import com.nie.secondhub.util.Result;
 import jakarta.annotation.Resource;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +24,14 @@ public class GoodsFavoriteServiceImpl implements GoodsFavoriteService {
     @Resource
     private GoodsMapper goodsMapper;
 
+    @Resource
+    private RedisTemplate<Object, Object> redisTemplate;
+
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+    private String getGoodsDetailCacheKey(Long goodsId) {
+        return "goods:detail:" + goodsId;
+    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -44,7 +52,6 @@ public class GoodsFavoriteServiceImpl implements GoodsFavoriteService {
             goodsFavoriteMapper.insert(newFav);
 
             goodsMapper.addFavoriteCount(goodsId);
-            return Result.success("收藏成功");
         } else {
             System.out.println("【收藏操作】已存在 → 切换状态");
             int newStatus = favorite.getIsDeleted() == 0 ? 1 : 0;
@@ -55,12 +62,20 @@ public class GoodsFavoriteServiceImpl implements GoodsFavoriteService {
 
             if (newStatus == 0) {
                 goodsMapper.addFavoriteCount(goodsId);
-                return Result.success("收藏成功");
             } else {
                 goodsMapper.reduceFavoriteCount(goodsId);
-                return Result.success("取消收藏成功");
             }
         }
+
+        // 清除商品详情缓存，确保下次获取时能看到最新的收藏状态
+        try {
+            redisTemplate.delete(getGoodsDetailCacheKey(goodsId));
+            System.out.println("【收藏操作】已清除商品详情缓存：" + goodsId);
+        } catch (Exception e) {
+            System.out.println("【收藏操作】清除缓存失败：" + e.getMessage());
+        }
+
+        return Result.success("操作成功");
     }
 
     @Override

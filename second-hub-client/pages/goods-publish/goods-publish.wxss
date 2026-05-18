@@ -49,3 +49,9 @@
 .submit-btn {
   margin-top: 8rpx;
 }
+
+.error-text {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: #e54d42;
+}

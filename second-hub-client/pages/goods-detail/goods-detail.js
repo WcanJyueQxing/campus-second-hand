@@ -96,28 +96,16 @@ Page({
     if (this.data.favoriting) return
     this.setData({ favoriting: true })
 
-    wx.request({
-      url: 'http://localhost:8080/api/user/favorites/' + this.data.id,
-      method: 'POST',
-      header: { token: token },
-      success: (res) => {
-        console.log('【收藏操作】响应：', res.data)
-        if (res.data && (res.data.code === 0 || res.data.code === 200)) {
-          wx.showToast({ title: res.data.message || '操作成功' })
-          setTimeout(() => {
-            this.loadDetail()
-          }, 500)
-        } else {
-          wx.showToast({ title: res.data.message || '操作失败', icon: 'none' })
-        }
-      },
-      fail: (err) => {
-        console.error('【收藏操作】失败：', err)
-        wx.showToast({ title: '网络异常', icon: 'none' })
-      },
-      complete: () => {
-        this.setData({ favoriting: false })
-      }
+    request({
+      url: `/api/user/favorites/${this.data.id}`,
+      method: 'POST'
+    }).then((data) => {
+      wx.showToast({ title: '操作成功' })
+      this.loadDetail()
+    }).catch((err) => {
+      wx.showToast({ title: err?.message || '操作失败', icon: 'none' })
+    }).finally(() => {
+      this.setData({ favoriting: false })
     })
   },
 

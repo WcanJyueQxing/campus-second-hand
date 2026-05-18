@@ -1,0 +1,192 @@
+/* 历史浏览页面样式 */
+.container {
+  min-height: 100vh;
+  background-color: #f5f7fa;
+  padding-bottom: 20rpx;
+}
+
+/* 头部样式 */
+.header {
+  position: sticky;
+  top: 0;
+  background-color: #fff;
+  padding: 32rpx 40rpx;
+  border-bottom: 1rpx solid #ebeef5;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-left .header-title {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #303133;
+}
+
+.header-right .clear-btn {
+  font-size: 32rpx;
+  color: #409eff;
+  padding: 8rpx 16rpx;
+  border-radius: 8rpx;
+  transition: all 0.3s;
+}
+
+.header-right .clear-btn:active {
+  background-color: #ecf5ff;
+}
+
+/* 下拉菜单 */
+.filter-section {
+  background-color: #fff;
+  padding: 24rpx 40rpx;
+  border-bottom: 1rpx solid #ebeef5;
+  margin-bottom: 20rpx;
+}
+
+.filter-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.filter-text {
+  font-size: 32rpx;
+  color: #303133;
+}
+
+.filter-arrow {
+  font-size: 24rpx;
+  color: #909399;
+}
+
+/* 历史记录容器 */
+.history-container {
+  padding: 0 20rpx;
+}
+
+/* 日期头部 */
+.date-header {
+  padding: 20rpx 20rpx 16rpx;
+}
+
+.date-text {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #606266;
+}
+
+/* 历史记录网格 */
+.history-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20rpx;
+  padding: 0 20rpx 20rpx;
+}
+
+/* 历史记录项 */
+.history-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 8rpx;
+  overflow: hidden;
+  transition: all 0.3s;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+}
+
+.history-item:active {
+  transform: scale(0.98);
+  opacity: 0.8;
+}
+
+.history-image {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 8rpx 8rpx 0 0;
+}
+
+.history-price {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #f56c6c;
+  padding: 12rpx 0;
+  text-align: center;
+  width: 100%;
+  background-color: #fff;
+  border-radius: 0 0 8rpx 8rpx;
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 160rpx 40rpx;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 120rpx;
+  margin-bottom: 32rpx;
+}
+
+.empty-title {
+  font-size: 32rpx;
+  font-weight: 500;
+  color: #606266;
+  margin-bottom: 16rpx;
+}
+
+.empty-desc {
+  font-size: 28rpx;
+  color: #909399;
+  margin-bottom: 48rpx;
+}
+
+/* 按钮样式 */
+/* .primary-btn {
+  width: 240rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  background-color: #409eff;
+  color: #fff;
+  border-radius: 40rpx;
+  font-size: 32rpx;
+  font-weight: 500;
+  border: none;
+}
+
+.primary-btn:active {
+  background-color: #3a8ee6;
+} */
+.btn-wrap {
+  padding: 20rpx 30rpx;
+}
+
+.primary-btn {
+  /* 文字水平+垂直居中 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* 还原截图样式 */
+  width: 100%;
+  height: 88rpx;
+  border: none;
+  border-radius: 44rpx; /* 胶囊型圆角 */
+  background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%); /* 蓝渐变 */
+  color: #ffffff;
+  font-size: 32rpx;
+  font-weight: 500;
+  line-height: 1; /* 清除小程序默认行高影响 */
+  box-shadow: 0 8rpx 20rpx rgba(79, 172, 254, 0.3); /* 柔和阴影 */
+}
+
+/* 去掉小程序button默认边框 */
+.primary-btn::after {
+  border: none;
+}

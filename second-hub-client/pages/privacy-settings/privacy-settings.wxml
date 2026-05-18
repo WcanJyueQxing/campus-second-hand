@@ -1,0 +1,19 @@
+<view class="privacy-container">
+  <view class="privacy-card">
+    <view class="card-title">账号安全</view>
+    <view class="privacy-item" bindtap="toChangePhone">
+      <view class="item-left">
+        <text class="item-title">手机号绑定</text>
+        <text class="item-desc">{{phone}}</text>
+      </view>
+      <text class="item-arrow">›</text>
+    </view>
+    <view class="privacy-item no-border" bindtap="toChangePassword">
+      <view class="item-left">
+        <text class="item-title">修改密码</text>
+        <text class="item-desc">定期修改密码可保护账号安全</text>
+      </view>
+      <text class="item-arrow">›</text>
+    </view>
+  </view>
+</view>

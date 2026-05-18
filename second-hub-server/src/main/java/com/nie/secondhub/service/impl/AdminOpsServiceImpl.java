@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nie.secondhub.common.exception.BizException;
+import com.nie.secondhub.common.enums.OrderStatus;
 import com.nie.secondhub.common.response.PageResponse;
 import com.nie.secondhub.dto.admin.CategorySaveRequest;
 import com.nie.secondhub.dto.admin.NoticeSaveRequest;
@@ -14,7 +15,9 @@ import com.nie.secondhub.entity.GoodsReport;
 import com.nie.secondhub.entity.Notice;
 import com.nie.secondhub.entity.TradeOrder;
 import com.nie.secondhub.entity.User;
+import com.nie.secondhub.entity.UserProfile;
 import com.nie.secondhub.mapper.CategoryMapper;
+import com.nie.secondhub.mapper.UserProfileMapper;
 import com.nie.secondhub.mapper.GoodsMapper;
 import com.nie.secondhub.mapper.GoodsReportMapper;
 import com.nie.secondhub.mapper.NoticeMapper;
@@ -45,6 +48,8 @@ public class AdminOpsServiceImpl implements AdminOpsService {
     private CategoryMapper categoryMapper;
     @Resource
     private UserMapper userMapper;
+    @Resource
+    private UserProfileMapper userProfileMapper;
     @Resource
     private NoticeMapper noticeMapper;
     @Resource
@@ -101,6 +106,15 @@ public class AdminOpsServiceImpl implements AdminOpsService {
         Page<User> userPage = userMapper.selectPage(page, new LambdaQueryWrapper<User>()
                 .like(keyword != null && !keyword.isBlank(), User::getNickname, keyword)
                 .orderByDesc(User::getCreatedAt));
+        
+        for (User user : userPage.getRecords()) {
+            UserProfile profile = userProfileMapper.selectOne(new LambdaQueryWrapper<UserProfile>()
+                    .eq(UserProfile::getUserId, user.getId()));
+            if (profile != null && profile.getAvatarUrl() != null && !profile.getAvatarUrl().isBlank()) {
+                user.setAvatarUrl(profile.getAvatarUrl());
+            }
+        }
+        
         return PageResponse.<User>builder()
                 .total(userPage.getTotal())
                 .pageNo(userPage.getCurrent())
@@ -192,11 +206,11 @@ public class AdminOpsServiceImpl implements AdminOpsService {
         }
 
         List<Map<String, Object>> orderStatusDistribution = new ArrayList<>();
-        String[] orderStatuses = {"PENDING_PAYMENT", "PAID", "SHIPPED", "COMPLETED", "CANCELLED"};
+        String[] orderStatuses = {"PENDING_PAYMENT", "PAID", "SELLER_CONFIRMED", "BUYER_CONFIRMED", "COMPLETED", "CANCELLED"};
         for (String status : orderStatuses) {
             Long count = tradeOrderMapper.selectCount(new LambdaQueryWrapper<TradeOrder>().eq(TradeOrder::getOrderStatus, status));
             Map<String, Object> item = new HashMap<>();
-            item.put("status", status);
+            item.put("status", OrderStatus.getNameByCode(status));
             item.put("count", count);
             orderStatusDistribution.add(item);
         }

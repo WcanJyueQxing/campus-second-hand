@@ -8,8 +8,11 @@
         {{detailStatusText}}
       </text>
     </view>
+    <view class="detail-info-row">
+      <text class="info-item">数量：{{detail.commentCount || 1}}</text>
+      <text class="info-item">卖家：{{detail.sellerName || '未知用户'}}</text>
+    </view>
     <view class="detail-desc">{{detail.description || '暂无描述信息'}}</view>
-    <view class="detail-seller">卖家：{{detail.sellerName || '未知用户'}}</view>
 
     <view class="action-row">
       <button wx:if="{{isOwner}}" class="ghost-btn action-btn" bindtap="toEdit">编辑商品</button>

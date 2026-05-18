@@ -34,9 +34,7 @@ public class AuthInterceptor implements HandlerInterceptor {
                 || path.equals("/api/user/goods/list")
                 || path.matches("/api/user/goods/\\d+$")
                 || path.matches("/api/user/categories")
-                || path.matches("/api/user/comments/\\d+$")
-                || path.equals("/api/user/goods/my")
-                || path.startsWith("/api/user/favorites");
+                || path.matches("/api/user/comments/\\d+$");
 
         // 检查是否携带token，如果携带则解析并设置用户信息
         String token = request.getHeader("Authorization");

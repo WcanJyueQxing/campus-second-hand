@@ -13,6 +13,7 @@ Page({
     captchaCode: '',
     registerForm: {
       username: '',
+      phone: '',
       password: '',
       confirmPassword: '',
       captchaCode: ''
@@ -80,6 +81,13 @@ Page({
     })
   },
 
+  // 注册手机号输入
+  onRegisterPhoneInput(e) {
+    this.setData({
+      'registerForm.phone': e.detail.value
+    })
+  },
+
   // 注册密码输入
   onRegisterPasswordInput(e) {
     this.setData({
@@ -125,10 +133,21 @@ Page({
 
   // 注册
   register() {
-    const { username, password, confirmPassword, captchaCode } = this.data.registerForm
+    const { username, phone, password, confirmPassword, captchaCode } = this.data.registerForm
 
     if (!username || !username.trim()) {
       wx.showToast({ title: '请输入用户名', icon: 'none' })
+      return
+    }
+
+    if (!phone || !phone.trim()) {
+      wx.showToast({ title: '请输入手机号', icon: 'none' })
+      return
+    }
+
+    const phoneReg = /^1[3-9]\d{9}$/
+    if (!phoneReg.test(phone.trim())) {
+      wx.showToast({ title: '手机号格式不正确', icon: 'none' })
       return
     }
 
@@ -158,6 +177,7 @@ Page({
       method: 'POST',
       data: {
         username: username.trim(),
+        phone: phone.trim(),
         password: password.trim(),
         captchaCode: captchaCode.trim(),
         captchaUuid: this.data.captchaUuid
@@ -170,6 +190,7 @@ Page({
       this.setData({
         registerForm: {
           username: '',
+          phone: '',
           password: '',
           confirmPassword: '',
           captchaCode: ''

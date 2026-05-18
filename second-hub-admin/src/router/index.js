@@ -1,4 +1,4 @@
-﻿import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 
 const routes = [
@@ -10,6 +10,7 @@ const routes = [
     children: [
       { path: 'dashboard', component: () => import('../views/DashboardView.vue') },
       { path: 'goods-audit', component: () => import('../views/GoodsAuditView.vue') },
+      { path: 'goods-manage', component: () => import('../views/GoodsManageView.vue') },
       { path: 'categories', component: () => import('../views/CategoryView.vue') },
       { path: 'users', component: () => import('../views/UserView.vue') },
       { path: 'reports', component: () => import('../views/ReportView.vue') },

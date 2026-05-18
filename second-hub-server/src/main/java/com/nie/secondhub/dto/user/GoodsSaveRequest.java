@@ -24,6 +24,8 @@ public class GoodsSaveRequest {
     @DecimalMin(value = "0.01", message = "价格必须大于0")
     private BigDecimal price;
 
+    private Integer commentCount = 1;
+
     @NotBlank(message = "封面图不能为空")
     private String coverImage;
 

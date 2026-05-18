@@ -44,6 +44,10 @@ Page({
   },
 
   onShow() {
+    const tabBar = this.getTabBar && this.getTabBar()
+    if (tabBar) {
+      tabBar.setData({ selected: 2 })
+    }
     this.setData({ pageNo: 1, hasMore: true, list: [] })
     this.loadOrders()
   },
@@ -221,5 +225,9 @@ Page({
     }).finally(() => {
       wx.hideLoading()
     })
+  },
+
+  navigateBack() {
+    wx.switchTab({ url: '/pages/home/home' })
   }
 })

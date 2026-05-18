@@ -37,4 +37,16 @@ public class AdminGoodsController {
         goodsService.adminOfflineGoods(goodsId);
         return ApiResponse.success(null);
     }
+
+    @GetMapping("/list")
+    public ApiResponse<PageResponse<GoodsVO>> list(@RequestParam(defaultValue = "1") @Min(1) Long pageNo,
+                                                   @RequestParam(defaultValue = "10") @Min(1) Long pageSize) {
+        return ApiResponse.success(goodsService.adminGoodsPage(pageNo, pageSize));
+    }
+
+    @DeleteMapping("/{goodsId}")
+    public ApiResponse<Void> delete(@PathVariable Long goodsId) {
+        goodsService.adminDeleteGoods(goodsId);
+        return ApiResponse.success(null);
+    }
 }

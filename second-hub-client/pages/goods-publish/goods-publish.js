@@ -16,6 +16,7 @@ Page({
       title: '',
       description: '',
       price: '',
+      commentCount: '',
       coverImage: '',
       images: []
     },
@@ -23,7 +24,8 @@ Page({
     categoryIndex: 0,
     submitting: false,
     maxFileSizeText: `${MAX_FILE_SIZE_MB}MB`,
-    maxImages: MAX_IMAGES
+    maxImages: MAX_IMAGES,
+    quantityError: ''
   },
 
   onShow() {
@@ -31,6 +33,21 @@ Page({
     if (tabBar) {
       tabBar.setData({ selected: 1 })
     }
+
+    const token = wx.getStorageSync('token')
+    if (!token) {
+      wx.showToast({ title: '请先登录', icon: 'none' })
+      setTimeout(() => {
+        wx.navigateTo({ url: '/pages/login/login' })
+      }, 1000)
+      return
+    }
+
+    const pendingId = Number(wx.getStorageSync(EDIT_GOODS_ID_KEY) || 0)
+    if (!pendingId && this.data.mode === 'edit') {
+      this.resetToCreateMode()
+    }
+
     this.loadCategories().then(() => {
       this.tryEnterEditMode()
     })
@@ -76,6 +93,7 @@ Page({
           title: detail.title || '',
           description: detail.description || '',
           price: detail.price === undefined || detail.price === null ? '' : String(detail.price),
+          commentCount: detail.commentCount === undefined || detail.commentCount === null ? '1' : String(detail.commentCount),
           coverImage: detail.coverImage || images[0] || '',
           images
         }
@@ -98,6 +116,22 @@ Page({
   onInput(e) {
     const { field } = e.currentTarget.dataset
     this.setData({ [`form.${field}`]: e.detail.value })
+    if (field === 'commentCount') {
+      this.setData({ quantityError: '' })
+    }
+  },
+
+  onQuantityBlur(e) {
+    const value = e.detail.value
+    const numValue = parseInt(value, 10)
+    if (!value || isNaN(numValue) || numValue <= 0 || numValue !== parseFloat(value)) {
+      this.setData({
+        'form.commentCount': '',
+        quantityError: '请输入大于0的整数'
+      })
+    } else {
+      this.setData({ quantityError: '' })
+    }
   },
 
   onCategoryChange(e) {
@@ -201,6 +235,7 @@ Page({
       title: f.title,
       description: f.description,
       price: Number(f.price),
+      commentCount: Number(f.commentCount) || 1,
       coverImage: f.coverImage,
       images: f.images
     }
@@ -234,6 +269,7 @@ Page({
         title: '',
         description: '',
         price: '',
+        commentCount: '',
         coverImage: '',
         images: []
       },

@@ -13,6 +13,10 @@
           <el-icon><DataAnalysis /></el-icon>
           <span>数据统计</span>
         </el-menu-item>
+        <el-menu-item index="/goods-manage">
+          <el-icon><ShoppingCart /></el-icon>
+          <span>商品管理</span>
+        </el-menu-item>
         <el-menu-item index="/goods-audit">
           <el-icon><Goods /></el-icon>
           <span>商品审核</span>

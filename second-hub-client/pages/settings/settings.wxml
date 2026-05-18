@@ -1,0 +1,54 @@
+<view class="settings-container">
+  <!-- 个人设置分组 -->
+  <view class="section">
+    <view class="section-title">个人</view>
+    <view class="settings-card">
+      <view class="settings-item" bindtap="toEditProfile">
+        <text class="settings-label">个人资料</text>
+        <view class="settings-arrow"></view>
+      </view>
+      <view class="settings-divider"></view>
+      <view class="settings-item" bindtap="toAddressManagement">
+        <text class="settings-label">地址管理</text>
+        <view class="settings-arrow"></view>
+      </view>
+      <view class="settings-divider"></view>
+      <view class="settings-item" bindtap="toAccountSecurity">
+        <text class="settings-label">账号与安全</text>
+        <view class="settings-arrow"></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 通用设置分组 -->
+  <view class="section">
+    <view class="section-title">通用</view>
+    <view class="settings-card">
+      <view class="settings-item" bindtap="toPrivacySettings">
+        <text class="settings-label">隐私设置</text>
+        <view class="settings-arrow"></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 其他分组 -->
+  <view class="section">
+    <view class="section-title">其他</view>
+    <view class="settings-card">
+      <view class="settings-item" bindtap="toAboutUs">
+        <text class="settings-label">关于我们</text>
+        <view class="settings-arrow"></view>
+      </view>
+      <view class="settings-divider"></view>
+      <view class="settings-item" bindtap="toFeedback">
+        <text class="settings-label">意见反馈</text>
+        <view class="settings-arrow"></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 退出登录按钮 -->
+  <view class="logout-container">
+    <button class="logout-button" bindtap="handleLogout">退出登录</button>
+  </view>
+</view>

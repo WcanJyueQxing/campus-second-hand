@@ -1,0 +1,104 @@
+<view class="address-edit-container">
+  <!-- 表单内容 -->
+  <view class="form-card">
+    <!-- 收货人 -->
+    <view class="form-item">
+      <text class="form-label">收货人</text>
+      <input
+        class="form-input"
+        name="name"
+        value="{{formData.name}}"
+        placeholder="请输入收货人姓名"
+        bindinput="bindInput"
+        data-field="name"
+      />
+    </view>
+    <view class="form-divider"></view>
+
+    <!-- 联系电话 -->
+    <view class="form-item">
+      <text class="form-label">联系电话</text>
+      <input
+        class="form-input"
+        name="phone"
+        value="{{formData.phone}}"
+        placeholder="请输入联系电话"
+        bindinput="bindInput"
+        data-field="phone"
+      />
+    </view>
+    <view class="form-divider"></view>
+
+    <!-- 所在地区 - 改为输入框 -->
+    <view class="form-item">
+      <text class="form-label">省</text>
+      <input
+        class="form-input"
+        name="province"
+        value="{{formData.province}}"
+        placeholder="请输入省份"
+        bindinput="bindInput"
+        data-field="province"
+      />
+    </view>
+    <view class="form-divider"></view>
+
+    <view class="form-item">
+      <text class="form-label">市</text>
+      <input
+        class="form-input"
+        name="city"
+        value="{{formData.city}}"
+        placeholder="请输入城市"
+        bindinput="bindInput"
+        data-field="city"
+      />
+    </view>
+    <view class="form-divider"></view>
+
+    <view class="form-item">
+      <text class="form-label">区</text>
+      <input
+        class="form-input"
+        name="district"
+        value="{{formData.district}}"
+        placeholder="请输入区县"
+        bindinput="bindInput"
+        data-field="district"
+      />
+    </view>
+    <view class="form-divider"></view>
+
+    <!-- 详细地址 -->
+    <view class="form-item detail-item">
+      <text class="form-label">详细地址</text>
+      <textarea
+        class="form-textarea"
+        name="detailAddress"
+        value="{{formData.detailAddress}}"
+        placeholder="请输入详细地址信息，如街道、门牌号等"
+        bindinput="bindInput"
+        data-field="detailAddress"
+        auto-height
+      />
+    </view>
+  </view>
+
+  <!-- 设为默认 -->
+  <view class="default-card">
+    <view class="default-item">
+      <text class="default-label">设为默认地址</text>
+      <switch
+        class="default-switch"
+        checked="{{formData.isDefault}}"
+        bindchange="bindSwitchChange"
+        color="#667eea"
+      />
+    </view>
+  </view>
+
+  <!-- 保存按钮 -->
+  <view class="save-btn-container">
+    <button class="save-btn" bindtap="submitForm">保存地址</button>
+  </view>
+</view>

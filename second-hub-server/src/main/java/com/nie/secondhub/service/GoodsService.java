@@ -28,4 +28,8 @@ public interface GoodsService {
     void auditGoods(Long adminId, Long goodsId, boolean approved, String reason);
 
     void adminOfflineGoods(Long goodsId);
+
+    PageResponse<GoodsVO> adminGoodsPage(Long pageNo, Long pageSize);
+
+    void adminDeleteGoods(Long goodsId);
 }

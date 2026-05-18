@@ -1,0 +1,44 @@
+<view class="random-name-page">
+  <view class="page-header">
+    <text class="page-title">随机姓名生成</text>
+    <text class="page-desc">点击按钮生成随机姓名，支持性别选择和批量生成</text>
+  </view>
+
+  <view class="gender-selector">
+    <text class="selector-title">选择性别：</text>
+    <view class="gender-buttons">
+      <view class="gender-btn {{gender === 'random' ? 'active' : ''}}" bindtap="selectGender" data-gender="random">
+        <text>随机</text>
+      </view>
+      <view class="gender-btn {{gender === 'male' ? 'active' : ''}}" bindtap="selectGender" data-gender="male">
+        <text>男</text>
+      </view>
+      <view class="gender-btn {{gender === 'female' ? 'active' : ''}}" bindtap="selectGender" data-gender="female">
+        <text>女</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="action-buttons">
+    <button class="primary-btn" bindtap="generateSingle" loading="{{loading}}">
+      生成单个姓名
+    </button>
+    <button class="secondary-btn" bindtap="generateBatch" loading="{{loading}}">
+      批量生成5个
+    </button>
+  </view>
+
+  <view class="result-area" wx:if="{{names.length > 0}}">
+    <text class="result-title">生成结果：</text>
+    <view class="name-list">
+      <view class="name-item" wx:for="{{names}}" wx:key="index" bindtap="copyName" data-name="{{item}}">
+        <text class="name-text">{{item}}</text>
+        <text class="copy-hint">点击复制</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty-state" wx:else>
+    <text class="empty-text">点击按钮生成随机姓名</text>
+  </view>
+</view>

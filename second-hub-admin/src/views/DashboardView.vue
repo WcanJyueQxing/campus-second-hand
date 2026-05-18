@@ -215,19 +215,22 @@ const categoryChartOption = computed(() => {
 })
 
 const orderStatusChartOption = computed(() => {
-  const statusMap = {
-    PENDING_PAYMENT: { name: '待支付', color: '#f56c6c' },
-    PAID: { name: '已支付', color: '#409eff' },
-    SHIPPED: { name: '已发货', color: '#e6a23c' },
-    COMPLETED: { name: '已完成', color: '#67c23a' },
-    CANCELLED: { name: '已取消', color: '#909399' }
+  const colorMap = {
+    '待支付': '#f56c6c',
+    '已支付': '#409eff',
+    '卖家已确认': '#e6a23c',
+    '买家已确认': '#67c23a',
+    '已完成': '#67c23a',
+    '已取消': '#909399',
+    '超时关闭': '#909399'
   }
 
   const orderStats = overview.value.orderStatusDistribution || []
-  const data = Object.entries(statusMap).map(([key, val]) => {
-    const found = orderStats.find(s => s.status === key)
-    return { name: val.name, value: found ? found.count : 0, itemStyle: { color: val.color } }
-  })
+  const data = orderStats.map(item => ({
+    name: item.status,
+    value: item.count,
+    itemStyle: { color: colorMap[item.status] || '#909399' }
+  }))
 
   return {
     tooltip: {
@@ -323,7 +326,10 @@ const load = async () => {
     trend.value = trendData || []
   } catch (error) {
     console.error('加载数据失败:', error)
-    ElMessage.error(error.message || '加载数据失败，请检查后端服务是否启动')
+    const isAuthError = error.message?.includes('令牌') || error.message?.includes('登录') || error.message?.includes('过期') || error.message?.includes('401')
+    if (!isAuthError) {
+      ElMessage.error(error.message || '加载数据失败，请检查后端服务是否启动')
+    }
     overview.value = {}
     trend.value = []
   } finally {
@@ -343,7 +349,7 @@ const handleCardClick = (label) => {
       router.push('/users')
       break
     case '商品总数':
-      router.push('/goods-audit')
+      router.push('/goods-manage')
       break
     case '待审核商品':
       router.push('/goods-audit')

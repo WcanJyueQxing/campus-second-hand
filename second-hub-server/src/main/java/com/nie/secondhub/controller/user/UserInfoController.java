@@ -26,18 +26,26 @@ public class UserInfoController {
     private UserProfileMapper userProfileMapper;
 
     @GetMapping
-    public ApiResponse<UserProfile> getUserInfo() {
+    public ApiResponse<User> getUserInfo() {
         Long userId = LoginUserHolder.requireUserId();
+        
+        User user = userMapper.selectById(userId);
+        if (user == null) {
+            return ApiResponse.fail(404, "用户不存在");
+        }
+        
         LambdaQueryWrapper<UserProfile> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(UserProfile::getUserId, userId);
         UserProfile profile = userProfileMapper.selectOne(wrapper);
-        if (profile == null) {
-            profile = new UserProfile();
-            profile.setUserId(userId);
-            profile.setGender(0);
-            userProfileMapper.insert(profile);
+        
+        if (profile != null && profile.getNickname() != null && !profile.getNickname().isBlank()) {
+            user.setNickname(profile.getNickname());
         }
-        return ApiResponse.success(profile);
+        if (profile != null && profile.getAvatarUrl() != null && !profile.getAvatarUrl().isBlank()) {
+            user.setAvatarUrl(profile.getAvatarUrl());
+        }
+        
+        return ApiResponse.success(user);
     }
 
     @PutMapping

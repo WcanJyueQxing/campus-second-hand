@@ -9,8 +9,10 @@ import com.nie.secondhub.dto.user.RegisterRequest;
 import com.nie.secondhub.dto.user.WxLoginRequest;
 import com.nie.secondhub.entity.AdminUser;
 import com.nie.secondhub.entity.User;
+import com.nie.secondhub.entity.UserProfile;
 import com.nie.secondhub.mapper.AdminUserMapper;
 import com.nie.secondhub.mapper.UserMapper;
+import com.nie.secondhub.mapper.UserProfileMapper;
 import com.nie.secondhub.security.JwtTokenUtil;
 import com.nie.secondhub.service.AuthService;
 import com.nie.secondhub.service.support.WechatAuthClient;
@@ -36,6 +38,8 @@ public class AuthServiceImpl implements AuthService {
     private UserMapper userMapper;
     @Resource
     private AdminUserMapper adminUserMapper;
+    @Resource
+    private UserProfileMapper userProfileMapper;
     @Resource
     private JwtTokenUtil jwtTokenUtil;
     @Resource
@@ -181,14 +185,31 @@ public class AuthServiceImpl implements AuthService {
             throw new BizException(400, "用户名已存在");
         }
 
+        // 检查手机号是否已存在
+        User phoneUser = userMapper.selectOne(new LambdaQueryWrapper<User>()
+                .eq(User::getPhone, request.getPhone()));
+        if (phoneUser != null) {
+            throw new BizException(400, "该手机号已被注册");
+        }
+
         // 创建新用户
         User user = new User();
         user.setNickname(request.getUsername());
+        user.setPhone(request.getPhone());
         user.setPassword(Md5Util.md5(request.getPassword()));
         user.setStatus(1);
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
 
         userMapper.insert(user);
+
+        // 创建用户档案
+        UserProfile profile = new UserProfile();
+        profile.setUserId(user.getId());
+        profile.setNickname(request.getUsername());
+        profile.setGender(0);
+        profile.setCreatedAt(LocalDateTime.now());
+        profile.setUpdatedAt(LocalDateTime.now());
+        userProfileMapper.insert(profile);
     }
 }

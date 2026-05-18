@@ -69,6 +69,7 @@ public class GoodsServiceImpl implements GoodsService {
         goods.setTitle(request.getTitle());
         goods.setDescription(request.getDescription());
         goods.setPrice(request.getPrice());
+        goods.setCommentCount(request.getCommentCount() != null ? request.getCommentCount() : 1);
         goods.setCoverImage(request.getCoverImage());
         goods.setStatus(GoodsStatus.PENDING.name());
         goods.setViewCount(0);
@@ -93,6 +94,7 @@ public class GoodsServiceImpl implements GoodsService {
         goods.setTitle(request.getTitle());
         goods.setDescription(request.getDescription());
         goods.setPrice(request.getPrice());
+        goods.setCommentCount(request.getCommentCount() != null ? request.getCommentCount() : 1);
         goods.setCoverImage(request.getCoverImage());
         goods.setStatus(GoodsStatus.PENDING.name());
         goods.setRejectReason(null);
@@ -266,6 +268,25 @@ public class GoodsServiceImpl implements GoodsService {
         goodsMapper.updateById(goods);
     }
 
+    @Override
+    public PageResponse<GoodsVO> adminGoodsPage(Long pageNo, Long pageSize) {
+        LambdaQueryWrapper<Goods> wrapper = new LambdaQueryWrapper<>();
+        wrapper.orderByDesc(Goods::getCreatedAt);
+        return pageGoods(wrapper, pageNo, pageSize);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void adminDeleteGoods(Long goodsId) {
+        Goods goods = getById(goodsId);
+        goods.setIsDeleted(1);
+        goods.setUpdatedAt(LocalDateTime.now());
+        goodsMapper.updateById(goods);
+
+        goodsImageMapper.delete(new LambdaUpdateWrapper<GoodsImage>().eq(GoodsImage::getGoodsId, goodsId));
+        goodsFavoriteMapper.delete(new LambdaUpdateWrapper<GoodsFavorite>().eq(GoodsFavorite::getGoodsId, goodsId));
+    }
+
     private PageResponse<GoodsVO> pageGoods(LambdaQueryWrapper<Goods> wrapper, Long pageNo, Long pageSize) {
         Page<Goods> page = new Page<>(pageNo, pageSize);
         Page<Goods> result = goodsMapper.selectPage(page, wrapper);
@@ -297,7 +318,7 @@ public class GoodsServiceImpl implements GoodsService {
         vo.setDescription(goods.getDescription());
         vo.setPrice(goods.getPrice());
         vo.setCoverImage(goods.getCoverImage());
-        vo.setStatus(goods.getStatus());
+        vo.setStatus(GoodsStatus.getNameByCode(goods.getStatus()));
         vo.setFavoriteCount(goods.getFavoriteCount());
         vo.setCommentCount(goods.getCommentCount());
         vo.setViewCount(goods.getViewCount());

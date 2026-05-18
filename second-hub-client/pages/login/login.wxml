@@ -72,6 +72,14 @@
           <text class="random-btn" bindtap="generateRandomRegisterName">{{loading ? '生成中...' : '随机'}}</text>
         </view>
 
+        <!-- 手机号输入框 -->
+        <view class="input-item">
+          <view class="input-icon">
+            <view class="icon-phone"></view>
+          </view>
+          <input class="input-field" placeholder="请输入手机号" value="{{registerForm.phone}}" bindinput="onRegisterPhoneInput" disabled="{{loading}}" />
+        </view>
+
         <!-- 密码输入框 -->
         <view class="input-item">
           <view class="input-icon">
