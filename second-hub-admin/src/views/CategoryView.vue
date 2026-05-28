@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <el-card>
     <template #header>分类管理</template>
     <div style="margin-bottom: 16px; display: flex; gap: 8px">
@@ -32,13 +32,30 @@ import { onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import request from '../utils/request'
 
+/**
+ * 分类管理视图组件
+ * 提供商品分类的新增、删除和列表展示功能
+ */
 const list = ref([])
+
+/**
+ * 分类表单数据
+ * @property {string} name - 分类名称
+ * @property {number} sort - 排序值
+ * @property {number} status - 状态（1-启用，0-停用）
+ */
 const form = reactive({ name: '', sort: 0, status: 1 })
 
+/**
+ * 加载分类列表
+ */
 const load = async () => {
   list.value = await request.get('/api/admin/categories')
 }
 
+/**
+ * 保存分类
+ */
 const save = async () => {
   if (!form.name) return
   await request.post('/api/admin/categories', form)
@@ -47,11 +64,16 @@ const save = async () => {
   load()
 }
 
+/**
+ * 删除分类
+ * @param {number} id - 分类ID
+ */
 const remove = async (id) => {
   await request.delete(`/api/admin/categories/${id}`)
   ElMessage.success('删除成功')
   load()
 }
 
+// 组件挂载时加载数据
 onMounted(load)
 </script>

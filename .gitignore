@@ -14,9 +14,13 @@ md/
 # SQL 文件
 *.sql
 
-# Markdown 文件（包括隐藏的 .*.md）
+# Markdown 文件（包括隐藏的 .*.md），但保留 README.md
 *.md
 .*.md
+!README.md
+!second-hub-admin/README.md
+!second-hub-client/README.md
+!second-hub-server/README.md
 
 # ========== Java / Spring Boot ==========
 # 编译产物

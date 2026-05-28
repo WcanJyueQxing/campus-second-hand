@@ -1,5 +1,20 @@
+/**
+ * 网络请求工具类
+ * 封装微信小程序的 wx.request 和 wx.uploadFile
+ */
+
+// 后端API基础地址
 const BASE_URL = 'http://127.0.0.1:8080'
 
+/**
+ * 发起HTTP请求
+ * @param {Object} options - 请求配置
+ * @param {string} options.url - 请求路径
+ * @param {string} [options.method='GET'] - 请求方法
+ * @param {Object} [options.data={}] - 请求数据
+ * @param {Object} [options.header={}] - 请求头
+ * @returns {Promise<any>} 请求结果
+ */
 function request({ url, method = 'GET', data = {}, header = {} }) {
   const token = wx.getStorageSync('token')
 
@@ -50,6 +65,11 @@ function request({ url, method = 'GET', data = {}, header = {} }) {
   })
 }
 
+/**
+ * 上传文件
+ * @param {string} filePath - 本地文件路径
+ * @returns {Promise<string>} 上传后的文件URL
+ */
 function uploadFile(filePath) {
   const token = wx.getStorageSync('token')
   return new Promise((resolve, reject) => {

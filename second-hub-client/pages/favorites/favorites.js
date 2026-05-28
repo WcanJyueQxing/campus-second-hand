@@ -1,19 +1,37 @@
+/**
+ * 收藏页面
+ * 展示用户收藏的商品列表
+ */
 const { request } = require('../../utils/request')
 
 Page({
+  /**
+   * 页面数据
+   * @property {Array} list - 收藏商品列表
+   * @property {boolean} loading - 加载状态
+   */
   data: {
     list: [],
     loading: false
   },
 
+  /**
+   * 页面加载时触发
+   */
   onLoad() {
     this.loadFavorites()
   },
 
+  /**
+   * 页面显示时触发
+   */
   onShow() {
     this.loadFavorites()
   },
 
+  /**
+   * 加载收藏列表
+   */
   loadFavorites() {
     this.setData({ loading: true })
 
@@ -35,6 +53,10 @@ Page({
     })
   },
 
+  /**
+   * 跳转到商品详情页
+   * @param {Object} e - 事件对象
+   */
   goDetail(e) {
     const goodsId = e.currentTarget.dataset.id
     wx.navigateTo({
@@ -42,6 +64,9 @@ Page({
     })
   },
 
+  /**
+   * 返回上一页
+   */
   goBack() {
     wx.navigateBack()
   }

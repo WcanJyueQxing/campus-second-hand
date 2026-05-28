@@ -14,4 +14,12 @@ public class LoginVO {
     private String nickname;
     private String role;
     private String token;
+    private String phone;
+    
+    public LoginVO(Long id, String nickname, String role, String token) {
+        this.id = id;
+        this.nickname = nickname;
+        this.role = role;
+        this.token = token;
+    }
 }

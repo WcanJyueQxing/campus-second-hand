@@ -187,7 +187,3 @@ PENDING_PAYMENT(待支付) -> PAID(已支付) -> SELLER_CONFIRMED(卖家已确�
 
 PENDING_PAYMENT -> CANCELLED(已取消)
 ```
-
-## 联系方式
-
-如有问题，请查阅项目文档或联系开发团队。

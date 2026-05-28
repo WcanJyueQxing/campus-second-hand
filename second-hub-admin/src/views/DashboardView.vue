@@ -1,5 +1,6 @@
 <template>
   <div class="dashboard" v-loading="loading">
+    <!-- 统计卡片区域 -->
     <el-row :gutter="16" class="stat-cards">
       <el-col :xs="12" :sm="8" :md="4" v-for="(item, index) in cards" :key="item.label">
         <el-card class="stat-card" :class="'stat-card-' + (index + 1)" @click="handleCardClick(item.label)">
@@ -14,6 +15,7 @@
       </el-col>
     </el-row>
 
+    <!-- 图表区域 - 第一行 -->
     <el-row :gutter="16" class="chart-row">
       <el-col :xs="24" :sm="24" :md="14">
         <el-card class="chart-card">
@@ -46,6 +48,7 @@
       </el-col>
     </el-row>
 
+    <!-- 图表区域 - 第二行 -->
     <el-row :gutter="16" class="chart-row">
       <el-col :xs="24" :sm="24" :md="12">
         <el-card class="chart-card">
@@ -74,18 +77,39 @@ import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 import request from '../utils/request'
 
+/**
+ * 仪表盘视图组件
+ * 展示系统概览数据、统计图表和趋势分析
+ */
 const router = useRouter()
 
+// 加载状态
 const loading = ref(true)
+
+// 概览数据
 const overview = ref({})
+
+// 趋势数据
 const trend = ref([])
+
+// 趋势类型：user-用户, goods-商品, order-订单
 const trendType = ref('user')
+
+// 时间范围：all-全部, 7days-近7天
 const timeRange = ref('7days')
 
+/**
+ * 趋势标题
+ * 根据时间范围动态显示
+ */
 const trendTitle = computed(() => {
   return timeRange.value === '7days' ? '近7日趋势' : '全部趋势'
 })
 
+/**
+ * 统计卡片配置
+ * 展示用户总数、商品总数、待审核商品、订单总数、待处理举报
+ */
 const cards = computed(() => [
   { label: '用户总数', value: overview.value.userCount ?? 0, icon: User },
   { label: '商品总数', value: overview.value.goodsCount ?? 0, icon: Goods },
@@ -94,6 +118,10 @@ const cards = computed(() => [
   { label: '待处理举报', value: overview.value.reportCount ?? 0, icon: Warning }
 ])
 
+/**
+ * 趋势图表配置
+ * 根据选中的趋势类型动态生成图表
+ */
 const trendChartOption = computed(() => {
   const colors = {
     user: '#409eff',
@@ -167,6 +195,9 @@ const trendChartOption = computed(() => {
   }
 })
 
+/**
+ * 商品分类分布图表配置
+ */
 const categoryChartOption = computed(() => {
   const colors = ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc']
   const data = (overview.value.categoryDistribution || []).map((item, index) => ({
@@ -214,6 +245,9 @@ const categoryChartOption = computed(() => {
   }
 })
 
+/**
+ * 订单状态分布图表配置
+ */
 const orderStatusChartOption = computed(() => {
   const colorMap = {
     '待支付': '#f56c6c',
@@ -264,6 +298,9 @@ const orderStatusChartOption = computed(() => {
   }
 })
 
+/**
+ * 用户状态分布图表配置
+ */
 const userStatusChartOption = computed(() => {
   const userStats = overview.value.userStatusDistribution || []
   const normalCount = userStats.find(s => s.status === 1)?.count || 0
@@ -315,6 +352,10 @@ const userStatusChartOption = computed(() => {
   }
 })
 
+/**
+ * 加载数据
+ * 获取概览数据和趋势数据
+ */
 const load = async () => {
   loading.value = true
   try {
@@ -337,12 +378,18 @@ const load = async () => {
   }
 }
 
+// 组件挂载时加载数据
 onMounted(load)
 
+// 监听时间范围和趋势类型变化，重新加载数据
 watch([timeRange, trendType], () => {
   load()
 }, { immediate: false })
 
+/**
+ * 处理统计卡片点击事件
+ * 根据点击的卡片跳转到对应页面
+ */
 const handleCardClick = (label) => {
   switch (label) {
     case '用户总数':

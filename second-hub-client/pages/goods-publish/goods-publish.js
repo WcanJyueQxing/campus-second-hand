@@ -1,11 +1,29 @@
+/**
+ * 商品发布页
+ * 提供商品发布和编辑功能，支持图片上传、表单验证
+ */
 const { request, uploadFile } = require('../../utils/request')
 
-const MAX_IMAGES = 6
-const MAX_FILE_SIZE_MB = 5
-const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024
-const EDIT_GOODS_ID_KEY = 'goods_publish_edit_goods_id'
+const MAX_IMAGES = 6                    // 最大图片数量
+const MAX_FILE_SIZE_MB = 5              // 单文件最大大小(MB)
+const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024  // 单文件最大大小(字节)
+const EDIT_GOODS_ID_KEY = 'goods_publish_edit_goods_id'     // 编辑商品ID存储键名
 
 Page({
+  /**
+   * 页面数据
+   * @property {string} mode - 模式（create-新建，edit-编辑）
+   * @property {number} editingGoodsId - 正在编辑的商品ID
+   * @property {string} pageTitle - 页面标题
+   * @property {string} submitText - 提交按钮文本
+   * @property {Object} form - 表单数据
+   * @property {Array} categories - 分类列表
+   * @property {number} categoryIndex - 当前选中的分类索引
+   * @property {boolean} submitting - 提交中
+   * @property {string} maxFileSizeText - 文件大小限制文本
+   * @property {number} maxImages - 最大图片数量
+   * @property {string} quantityError - 数量错误提示
+   */
   data: {
     mode: 'create',
     editingGoodsId: null,
@@ -28,6 +46,10 @@ Page({
     quantityError: ''
   },
 
+  /**
+   * 页面显示时触发
+   * 初始化TabBar状态，检查登录，加载分类，尝试进入编辑模式
+   */
   onShow() {
     const tabBar = this.getTabBar && this.getTabBar()
     if (tabBar) {
@@ -53,6 +75,10 @@ Page({
     })
   },
 
+  /**
+   * 加载分类列表
+   * @returns {Promise}
+   */
   loadCategories() {
     return request({ url: '/api/user/public/categories' }).then((data) => {
       const categories = data || []
@@ -71,6 +97,9 @@ Page({
     })
   },
 
+  /**
+   * 尝试进入编辑模式
+   */
   tryEnterEditMode() {
     const pendingId = Number(wx.getStorageSync(EDIT_GOODS_ID_KEY) || 0)
     if (!pendingId) {
@@ -101,6 +130,11 @@ Page({
     })
   },
 
+  /**
+   * 标准化图片数组
+   * @param {Object} detail - 商品详情
+   * @returns {Array} 图片URL数组
+   */
   normalizeImages(detail) {
     const list = Array.isArray(detail && detail.images) ? detail.images : []
     const urls = list.filter((item) => typeof item === 'string' && item.trim()).map((item) => item.trim())
@@ -113,6 +147,10 @@ Page({
     return []
   },
 
+  /**
+   * 表单输入事件
+   * @param {Object} e - 事件对象
+   */
   onInput(e) {
     const { field } = e.currentTarget.dataset
     this.setData({ [`form.${field}`]: e.detail.value })
@@ -121,6 +159,11 @@ Page({
     }
   },
 
+  /**
+   * 数量输入框失去焦点事件
+   * 验证数量是否为大于0的整数
+   * @param {Object} e - 事件对象
+   */
   onQuantityBlur(e) {
     const value = e.detail.value
     const numValue = parseInt(value, 10)
@@ -134,6 +177,10 @@ Page({
     }
   },
 
+  /**
+   * 分类选择事件
+   * @param {Object} e - 事件对象
+   */
   onCategoryChange(e) {
     const index = Number(e.detail.value)
     const category = this.data.categories[index]
@@ -145,6 +192,9 @@ Page({
     }
   },
 
+  /**
+   * 选择图片
+   */
   chooseImage() {
     const existing = this.data.form.images || []
     const remaining = MAX_IMAGES - existing.length
@@ -181,7 +231,7 @@ Page({
             'form.coverImage': merged[0] || ''
           })
         } catch (e) {
-          // uploadFile has toast handling; catch here to avoid unhandled rejection.
+          // uploadFile已处理错误提示，此处仅捕获避免未处理异常
         } finally {
           wx.hideLoading()
         }
@@ -189,6 +239,10 @@ Page({
     })
   },
 
+  /**
+   * 删除图片
+   * @param {Object} e - 事件对象
+   */
   removeImage(e) {
     const index = Number(e.currentTarget.dataset.index)
     const current = this.data.form.images || []
@@ -202,6 +256,11 @@ Page({
     })
   },
 
+  /**
+   * 去重URL列表
+   * @param {Array} list - URL列表
+   * @returns {Array} 去重后的列表
+   */
   uniqueUrls(list) {
     const result = []
     const seen = new Set()
@@ -219,6 +278,9 @@ Page({
     return result
   },
 
+  /**
+   * 提交表单
+   */
   submit() {
     if (this.data.submitting) {
       return
@@ -256,6 +318,9 @@ Page({
     })
   },
 
+  /**
+   * 重置为创建模式
+   */
   resetToCreateMode() {
     const categoryId = this.data.categories[0] ? this.data.categories[0].id : null
     wx.removeStorageSync(EDIT_GOODS_ID_KEY)

@@ -2,6 +2,22 @@
   <el-card>
     <template #header>订单监管</template>
     
+    <!-- 搜索栏 -->
+    <div class="search-bar">
+      <el-input 
+        v-model="keyword" 
+        placeholder="请输入订单号搜索" 
+        class="search-input"
+        @keyup.enter="load"
+        @input="handleSearch"
+      >
+        <template #append>
+          <el-button @click="load" icon="Search">搜索</el-button>
+        </template>
+      </el-input>
+    </div>
+    
+    <!-- 图片预览遮罩层 -->
     <div v-if="previewVisible" class="image-preview-mask" @click="closePreview">
       <img :src="previewImageSrc" alt="预览图" class="preview-image" />
     </div>
@@ -51,10 +67,21 @@ import { onMounted, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import request from '../utils/request'
 
+/**
+ * 订单监管视图组件
+ * 提供订单列表展示、搜索、商品图片预览和订单取消功能
+ */
 const list = ref([])
 const previewVisible = ref(false)
 const previewImageSrc = ref('')
+const keyword = ref('')
+let searchTimer = null
 
+/**
+ * 获取订单状态对应的标签类型
+ * @param {string} status - 订单状态
+ * @returns {string} 标签类型
+ */
 const getOrderStatusType = (status) => {
   const text = String(status || '')
   if (text.includes('完成')) return 'success'
@@ -63,6 +90,11 @@ const getOrderStatusType = (status) => {
   return 'default'
 }
 
+/**
+ * 获取支付状态对应的标签类型
+ * @param {string} status - 支付状态
+ * @returns {string} 标签类型
+ */
 const getPayStatusType = (status) => {
   const text = String(status || '')
   if (text.includes('已支付')) return 'success'
@@ -70,32 +102,67 @@ const getPayStatusType = (status) => {
   return 'default'
 }
 
+/**
+ * 加载订单列表（支持搜索）
+ */
 const load = async () => {
-  const page = await request.get('/api/admin/orders', { params: { pageNo: 1, pageSize: 100 } })
+  const page = await request.get('/api/admin/orders', { params: { pageNo: 1, pageSize: 100, keyword: keyword.value } })
   list.value = page.records || []
 }
 
+/**
+ * 输入变化时触发搜索（带防抖）
+ */
+const handleSearch = () => {
+  if (searchTimer) {
+    clearTimeout(searchTimer)
+  }
+  searchTimer = setTimeout(() => {
+    load()
+  }, 300)
+}
+
+/**
+ * 取消订单
+ * @param {number} id - 订单ID
+ */
 const cancel = async (id) => {
   await request.post(`/api/admin/orders/${id}/cancel`)
   ElMessage.success('已取消')
   load()
 }
 
+/**
+ * 预览商品图片
+ * @param {string} src - 图片URL
+ */
 const previewImage = (src) => {
   previewImageSrc.value = src
   previewVisible.value = true
   document.body.style.overflow = 'hidden'
 }
 
+/**
+ * 关闭图片预览
+ */
 const closePreview = () => {
   previewVisible.value = false
   document.body.style.overflow = ''
 }
 
+// 组件挂载时加载数据
 onMounted(load)
 </script>
 
 <style scoped>
+.search-bar {
+  margin-bottom: 16px;
+}
+
+.search-input {
+  width: 300px;
+}
+
 .cover-image {
   width: 60px;
   height: 60px;

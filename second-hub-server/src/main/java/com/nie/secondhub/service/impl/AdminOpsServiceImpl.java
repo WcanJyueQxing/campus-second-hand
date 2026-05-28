@@ -103,9 +103,12 @@ public class AdminOpsServiceImpl implements AdminOpsService {
     @Override
     public PageResponse<?> userPage(Long pageNo, Long pageSize, String keyword) {
         Page<User> page = new Page<>(pageNo, pageSize);
-        Page<User> userPage = userMapper.selectPage(page, new LambdaQueryWrapper<User>()
-                .like(keyword != null && !keyword.isBlank(), User::getNickname, keyword)
-                .orderByDesc(User::getCreatedAt));
+        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<User>();
+        if (keyword != null && !keyword.isBlank()) {
+            wrapper.and(w -> w.like(User::getNickname, keyword).or().like(User::getPhone, keyword));
+        }
+        wrapper.orderByDesc(User::getCreatedAt);
+        Page<User> userPage = userMapper.selectPage(page, wrapper);
         
         for (User user : userPage.getRecords()) {
             UserProfile profile = userProfileMapper.selectOne(new LambdaQueryWrapper<UserProfile>()

@@ -29,10 +29,10 @@
           <el-icon><User /></el-icon>
           <span>用户管理</span>
         </el-menu-item>
-        <el-menu-item index="/reports">
+        <!-- <el-menu-item index="/reports">
           <el-icon><Warning /></el-icon>
           <span>举报处理</span>
-        </el-menu-item>
+        </el-menu-item> -->
         <el-menu-item index="/notices">
           <el-icon><Bell /></el-icon>
           <span>公告管理</span>
@@ -40,6 +40,10 @@
         <el-menu-item index="/orders">
           <el-icon><List /></el-icon>
           <span>订单监管</span>
+        </el-menu-item>
+        <el-menu-item index="/feedback">
+          <el-icon><Warning /></el-icon>
+          <span>意见反馈</span>
         </el-menu-item>
       </el-menu>
     </el-aside>

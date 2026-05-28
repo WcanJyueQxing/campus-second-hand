@@ -30,11 +30,23 @@ import { useRouter } from 'vue-router'
 import request from '../utils/request'
 import { useAuthStore } from '../stores/auth'
 
+/**
+ * 登录视图组件
+ * 提供管理员登录功能，包含用户名、密码和验证码验证
+ */
 const router = useRouter()
 const authStore = useAuthStore()
 
+// 验证码图片的 Base64 数据
 const captchaBase64 = ref('')
 
+/**
+ * 登录表单数据
+ * @property {string} username - 用户名
+ * @property {string} password - 密码
+ * @property {string} captchaCode - 验证码
+ * @property {string} captchaUuid - 验证码 UUID
+ */
 const form = reactive({
   username: 'admin',
   password: '123456',
@@ -42,6 +54,10 @@ const form = reactive({
   captchaUuid: ''
 })
 
+/**
+ * 刷新验证码
+ * 调用后端接口获取新的验证码图片
+ */
 const refreshCaptcha = async () => {
   try {
     const data = await request.get('/api/user/captcha/generate')
@@ -52,18 +68,28 @@ const refreshCaptcha = async () => {
   }
 }
 
+/**
+ * 提交登录请求
+ * 验证表单后调用登录接口，成功后跳转到首页
+ */
 const submit = async () => {
+  // 验证验证码是否填写
   if (!form.captchaCode) {
     ElMessage.error('请输入验证码')
     return
   }
   
   try {
+    // 调用管理员登录接口
     const data = await request.post('/api/admin/auth/login', form)
+    
+    // 保存登录状态
     authStore.setAuth(data.token, data.nickname || '管理员')
+    
     ElMessage.success('登录成功')
     router.push('/dashboard')
   } catch (error) {
+    // 登录失败时刷新验证码
     if (error.code === 400) {
       refreshCaptcha()
       form.captchaCode = ''
@@ -72,6 +98,7 @@ const submit = async () => {
   }
 }
 
+// 组件挂载时加载验证码
 onMounted(() => {
   refreshCaptcha()
 })

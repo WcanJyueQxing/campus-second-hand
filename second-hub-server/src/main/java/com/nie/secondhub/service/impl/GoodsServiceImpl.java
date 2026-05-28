@@ -269,8 +269,9 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
-    public PageResponse<GoodsVO> adminGoodsPage(Long pageNo, Long pageSize) {
+    public PageResponse<GoodsVO> adminGoodsPage(Long pageNo, Long pageSize, String keyword) {
         LambdaQueryWrapper<Goods> wrapper = new LambdaQueryWrapper<>();
+        wrapper.like(keyword != null && !keyword.isBlank(), Goods::getTitle, keyword);
         wrapper.orderByDesc(Goods::getCreatedAt);
         return pageGoods(wrapper, pageNo, pageSize);
     }

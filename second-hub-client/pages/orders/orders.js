@@ -1,6 +1,19 @@
+/**
+ * 订单页面
+ * 展示订单列表，支持买家/卖家视角切换和订单操作
+ */
 const { request } = require('../../utils/request')
 
 Page({
+  /**
+   * 页面数据
+   * @property {string} asRole - 角色视角（buyer-买家，seller-卖家）
+   * @property {Array} list - 订单列表
+   * @property {number} pageNo - 当前页码
+   * @property {number} pageSize - 每页大小
+   * @property {boolean} hasMore - 是否有更多数据
+   * @property {boolean} loading - 加载状态
+   */
   data: {
     asRole: 'buyer',
     list: [],
@@ -10,8 +23,12 @@ Page({
     loading: false
   },
 
+  /**
+   * 页面加载时触发
+   * 解析跳转参数，确定显示哪种订单列表
+   * @param {Object} options - URL参数
+   */
   onLoad(options) {
-    // 优先从globalData读取类型参数（来自switchTab跳转）
     const app = getApp()
     const globalData = app.globalData || {}
     
@@ -23,14 +40,11 @@ Page({
       } else if (globalData.orderTabType === 'pending_review') {
         this.setData({ asRole: 'buyer' })
         this.loadPendingReviews()
-        // 清除globalData中的类型，避免影响下次跳转
         app.globalData.orderTabType = null
         return
       }
-      // 清除globalData中的类型，避免影响下次跳转
       app.globalData.orderTabType = null
     } else if (options.type) {
-      // 备用：从URL参数读取（来自navigateTo跳转，非Tab页面）
       if (options.type === 'sold') {
         this.setData({ asRole: 'seller' })
       } else if (options.type === 'bought') {
@@ -43,6 +57,10 @@ Page({
     }
   },
 
+  /**
+   * 页面显示时触发
+   * 初始化TabBar状态，重新加载订单列表
+   */
   onShow() {
     const tabBar = this.getTabBar && this.getTabBar()
     if (tabBar) {
@@ -52,6 +70,10 @@ Page({
     this.loadOrders()
   },
 
+  /**
+   * 下拉刷新时触发
+   * @param {Function} callback - 刷新完成回调
+   */
   onPullDownRefresh() {
     this.setData({ pageNo: 1, hasMore: true, list: [] })
     this.loadOrders(() => {
@@ -59,6 +81,10 @@ Page({
     })
   },
 
+  /**
+   * 切换角色视角
+   * @param {Object} e - 事件对象
+   */
   switchRole(e) {
     const role = e.currentTarget.dataset.role
     if (role === this.data.asRole) {
@@ -73,6 +99,10 @@ Page({
     this.loadOrders()
   },
 
+  /**
+   * 加载订单列表
+   * @param {Function} callback - 加载完成回调
+   */
   loadOrders(callback) {
     if (this.data.loading || !this.data.hasMore) {
       callback && callback()
@@ -111,6 +141,9 @@ Page({
     })
   },
 
+  /**
+   * 加载待评价订单
+   */
   loadPendingReviews() {
     if (this.data.loading) return
 
@@ -137,18 +170,28 @@ Page({
     })
   },
 
+  /**
+   * 加载更多订单
+   */
   loadMore() {
     if (!this.data.hasMore || this.data.loading) return
     this.loadOrders()
   },
 
+  /**
+   * 跳转到订单详情页
+   * @param {Object} e - 事件对象
+   */
   toOrderDetail(e) {
     const orderId = e.currentTarget.dataset.id
-    wx.navigateTo({ 
-      url: `/pages/order-detail/order-detail?id=${orderId}` 
-    })
+    wx.navigateTo({ url: `/pages/order-detail/order-detail?id=${orderId}` })
   },
 
+  /**
+   * 格式化日期
+   * @param {string} dateString - 日期字符串
+   * @returns {string} 格式化后的日期
+   */
   formatDate(dateString) {
     if (!dateString) return ''
     const date = new Date(dateString)
@@ -160,6 +203,11 @@ Page({
     return `${year}-${month}-${day} ${hours}:${minutes}`
   },
 
+  /**
+   * 获取订单状态文本
+   * @param {string} status - 状态值
+   * @returns {string} 状态文本
+   */
   getOrderStatusText(status) {
     const text = String(status || '')
     if (text === '1' || text.toUpperCase() === 'PENDING') return '待处理'
@@ -175,6 +223,11 @@ Page({
     return text || '未知'
   },
 
+  /**
+   * 获取订单状态样式类
+   * @param {string} status - 状态值
+   * @returns {string} 样式类名
+   */
   getOrderStatusClass(status) {
     const text = String(status || '').toUpperCase()
     if (text === '1' || text === 'PENDING') return 'tag--warning'
@@ -190,6 +243,11 @@ Page({
     return 'tag--info'
   },
 
+  /**
+   * 获取支付状态文本
+   * @param {string} status - 状态值
+   * @returns {string} 状态文本
+   */
   getPayStatusText(status) {
     const text = String(status || '')
     if (text === '0' || text.toUpperCase() === 'UNPAID') return '未支付'
@@ -198,6 +256,11 @@ Page({
     return text || '未知'
   },
 
+  /**
+   * 获取支付状态样式类
+   * @param {string} status - 状态值
+   * @returns {string} 样式类名
+   */
   getPayStatusClass(status) {
     const text = String(status || '').toUpperCase()
     if (text === '0' || text === 'UNPAID') return 'tag--warning'
@@ -206,9 +269,11 @@ Page({
     return 'tag--info'
   },
 
+  /**
+   * 执行订单操作
+   * @param {Object} e - 事件对象
+   */
   doAction(e) {
-    // 移除stopPropagation，微信小程序中可能不需要或有兼容性问题
-    
     const { id, action } = e.currentTarget.dataset
     const apiMap = {
       pay: `/api/user/orders/${id}/pay`,
@@ -227,6 +292,9 @@ Page({
     })
   },
 
+  /**
+   * 返回首页
+   */
   navigateBack() {
     wx.switchTab({ url: '/pages/home/home' })
   }

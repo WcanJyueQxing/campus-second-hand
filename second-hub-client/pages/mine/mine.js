@@ -1,6 +1,21 @@
+/**
+ * 我的页面
+ * 展示用户信息、统计数据和功能入口
+ */
 const { request } = require('../../utils/request')
 
 Page({
+  /**
+   * 页面数据
+   * @property {boolean} isLoggedIn - 是否已登录
+   * @property {string} token - 用户令牌
+   * @property {string} avatarUrl - 用户头像URL
+   * @property {string} nickname - 用户昵称
+   * @property {number} publishCount - 发布商品数量
+   * @property {number} soldCount - 卖出商品数量
+   * @property {number} boughtCount - 购买商品数量
+   * @property {number} reviewCount - 待评价数量
+   */
   data: {
     isLoggedIn: false,
     token: '',
@@ -12,6 +27,10 @@ Page({
     reviewCount: 0
   },
 
+  /**
+   * 页面显示时触发
+   * 初始化TabBar状态，检查登录状态
+   */
   onShow() {
     const tabBar = this.getTabBar && this.getTabBar()
     if (tabBar) {
@@ -20,6 +39,9 @@ Page({
     this.checkLoginStatus()
   },
 
+  /**
+   * 检查登录状态
+   */
   checkLoginStatus() {
     const token = wx.getStorageSync('token') || ''
     const userInfo = wx.getStorageSync('userInfo') || {}
@@ -48,6 +70,9 @@ Page({
     }
   },
 
+  /**
+   * 加载用户信息
+   */
   loadUserProfile() {
     request({ url: '/api/user/info' }).then((data) => {
       if (data) {
@@ -60,17 +85,18 @@ Page({
         userInfo.nickname = data.nickname
         wx.setStorageSync('userInfo', userInfo)
       }
-    }).catch(() => {
-    })
+    }).catch(() => {})
   },
 
+  /**
+   * 加载交易统计数据
+   */
   loadTradeCounts() {
     request({ url: '/api/user/goods/my' }).then((data) => {
       if (data && data.records) {
         this.setData({ publishCount: data.records.length || 0 })
       }
-    }).catch(() => {
-    })
+    }).catch(() => {})
 
     request({ url: '/api/user/orders/stats' }).then((data) => {
       if (data) {
@@ -80,14 +106,19 @@ Page({
           reviewCount: data.pendingReviewCount || 0
         })
       }
-    }).catch(() => {
-    })
+    }).catch(() => {})
   },
 
+  /**
+   * 跳转到登录页面
+   */
   toLogin() {
     wx.navigateTo({ url: '/pages/login/login' })
   },
 
+  /**
+   * 跳转到个人资料编辑页面
+   */
   toProfileEdit() {
     if (!this.data.isLoggedIn) {
       this.toLogin()
@@ -96,6 +127,9 @@ Page({
     wx.navigateTo({ url: '/pages/profile-edit/profile-edit' })
   },
 
+  /**
+   * 跳转到我的商品页面
+   */
   toMyGoods() {
     if (!this.data.isLoggedIn) {
       this.toLogin()
@@ -103,6 +137,10 @@ Page({
     }
     wx.navigateTo({ url: '/pages/my-goods/my-goods' })
   },
+
+  /**
+   * 跳转到发布页面
+   */
   toPublish() {
     if (!this.data.isLoggedIn) {
       this.toLogin()
@@ -110,23 +148,21 @@ Page({
     }
     wx.navigateTo({ url: '/pages/my-goods/my-goods' })
   },
-  // toPublish() {
-  //   if (!this.data.isLoggedIn) {
-  //     this.toLogin()
-  //     return
-  //   }
-  //   wx.navigateTo({ url: '/pages/goods-publish/goods-publish' })
-  // },
 
+  /**
+   * 跳转到卖出订单页面
+   */
   toSoldOrders() {
     if (!this.data.isLoggedIn) {
       this.toLogin()
       return
     }
-    // 跳转到专门的"我卖出的"页面
     wx.navigateTo({ url: '/pages/my-sold/my-sold' })
   },
 
+  /**
+   * 跳转到购买订单页面
+   */
   toBoughtOrders() {
     if (!this.data.isLoggedIn) {
       this.toLogin()
@@ -135,6 +171,9 @@ Page({
     wx.navigateTo({ url: '/pages/my-bought/my-bought' })
   },
 
+  /**
+   * 跳转到待评价页面
+   */
   toPendingReviews() {
     if (!this.data.isLoggedIn) {
       this.toLogin()
@@ -143,6 +182,9 @@ Page({
     wx.navigateTo({ url: '/pages/my-reviews/my-reviews' })
   },
 
+  /**
+   * 跳转到收藏页面
+   */
   toFavorites() {
     if (!this.data.isLoggedIn) {
       this.toLogin()
@@ -151,6 +193,9 @@ Page({
     wx.navigateTo({ url: '/pages/favorites/favorites' })
   },
 
+  /**
+   * 跳转到浏览历史页面
+   */
   toHistory() {
     if (!this.data.isLoggedIn) {
       this.toLogin()
@@ -159,6 +204,9 @@ Page({
     wx.navigateTo({ url: '/pages/history/history' })
   },
 
+  /**
+   * 跳转到设置页面
+   */
   toSettings() {
     if (!this.data.isLoggedIn) {
       this.toLogin()
@@ -167,6 +215,9 @@ Page({
     wx.navigateTo({ url: '/pages/settings/settings' })
   },
 
+  /**
+   * 退出登录
+   */
   handleLogout() {
     wx.showModal({
       title: '确认退出',

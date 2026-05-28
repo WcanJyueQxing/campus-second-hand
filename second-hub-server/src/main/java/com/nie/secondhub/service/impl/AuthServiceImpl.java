@@ -79,6 +79,7 @@ public class AuthServiceImpl implements AuthService {
                 .nickname(user.getNickname())
                 .role(RoleType.USER.name())
                 .token(token)
+                .phone(user.getPhone())
                 .build();
     }
 
@@ -153,6 +154,7 @@ public class AuthServiceImpl implements AuthService {
                 .nickname(user.getNickname())
                 .role(RoleType.USER.name())
                 .token(token)
+                .phone(user.getPhone())
                 .build();
     }
 

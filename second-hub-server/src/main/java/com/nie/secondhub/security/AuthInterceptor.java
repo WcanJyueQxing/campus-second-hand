@@ -28,6 +28,7 @@ public class AuthInterceptor implements HandlerInterceptor {
                 || path.startsWith("/api/user/public/")
                 || path.startsWith("/api/user/captcha/")
                 || path.startsWith("/api/user/random-name/")
+                || path.startsWith("/api/feedback")
                 || path.startsWith("/v3/api-docs") || path.startsWith("/swagger-ui")
                 || path.startsWith("/doc.html") || path.startsWith("/uploads/")
                 || path.startsWith("/error")

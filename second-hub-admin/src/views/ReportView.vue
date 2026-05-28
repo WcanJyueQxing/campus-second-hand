@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <el-card>
     <template #header>举报处理</template>
     <el-table :data="list" border>
@@ -20,20 +20,33 @@ import { onMounted, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '../utils/request'
 
+/**
+ * 举报处理视图组件
+ * 提供举报列表展示和举报处理功能
+ */
 const list = ref([])
 
+/**
+ * 加载举报列表
+ */
 const load = async () => {
   const page = await request.get('/api/admin/reports', { params: { pageNo: 1, pageSize: 100 } })
   list.value = page.records || []
 }
 
+/**
+ * 处理举报
+ * @param {Object} row - 举报数据
+ */
 const handle = async (row) => {
   const text = await ElMessageBox.prompt('请输入处理结果', '处理举报').then((res) => res.value).catch(() => null)
   if (text === null) return
+  
   await request.post(`/api/admin/reports/${row.id}/handle`, { handleResult: text })
   ElMessage.success('处理成功')
   load()
 }
 
+// 组件挂载时加载数据
 onMounted(load)
 </script>

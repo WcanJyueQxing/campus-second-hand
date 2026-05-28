@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 
+/**
+ * 用户信息控制器
+ * 提供用户信息查询和修改接口
+ */
 @Validated
 @RestController
 @RequestMapping("/api/user/info")
@@ -25,6 +29,11 @@ public class UserInfoController {
     @Resource
     private UserProfileMapper userProfileMapper;
 
+    /**
+     * 获取当前用户信息
+     * 
+     * @return 用户信息（包含用户基本信息和档案信息）
+     */
     @GetMapping
     public ApiResponse<User> getUserInfo() {
         Long userId = LoginUserHolder.requireUserId();
@@ -48,6 +57,12 @@ public class UserInfoController {
         return ApiResponse.success(user);
     }
 
+    /**
+     * 更新用户信息
+     * 
+     * @param request 用户更新请求（包含昵称、头像、签名等）
+     * @return 操作结果
+     */
     @PutMapping
     public ApiResponse<Void> updateUserInfo(@Validated @RequestBody UserUpdateRequest request) {
         Long userId = LoginUserHolder.requireUserId();

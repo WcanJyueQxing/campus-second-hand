@@ -167,9 +167,10 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public PageResponse<OrderVO> adminOrders(Long pageNo, Long pageSize, String orderStatus) {
+    public PageResponse<OrderVO> adminOrders(Long pageNo, Long pageSize, String orderStatus, String keyword) {
         LambdaQueryWrapper<TradeOrder> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(orderStatus != null && !orderStatus.isBlank(), TradeOrder::getOrderStatus, orderStatus);
+        wrapper.like(keyword != null && !keyword.isBlank(), TradeOrder::getOrderNo, keyword);
         wrapper.orderByDesc(TradeOrder::getCreatedAt);
         return pageOrders(wrapper, pageNo, pageSize);
     }

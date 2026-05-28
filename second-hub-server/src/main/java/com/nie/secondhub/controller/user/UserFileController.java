@@ -11,6 +11,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
+/**
+ * 用户文件控制器
+ * 提供用户文件上传接口
+ */
 @RestController
 @RequestMapping("/api/user/files")
 public class UserFileController {
@@ -18,6 +22,12 @@ public class UserFileController {
     @Resource
     private FileStorageService fileStorageService;
 
+    /**
+     * 上传文件
+     * 
+     * @param file 上传的文件
+     * @return 包含文件URL的结果
+     */
     @PostMapping("/upload")
     public ApiResponse<Map<String, String>> upload(@RequestPart("file") MultipartFile file) {
         return ApiResponse.success(Map.of("url", fileStorageService.upload(file)));
